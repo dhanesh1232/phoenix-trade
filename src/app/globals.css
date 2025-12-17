@@ -1,0 +1,140 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =====================================
+   PHOENIX BRAND COLOR SYSTEM
+   ===================================== */
+
+:root {
+    /* Scroll color */
+    --scrollbar-color-bg: #0f172a;
+
+    /* Absolute */
+    --white: #ffffff;
+    --black: #000000;
+
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+
+    /* Brand emerald (from logo) */
+    --emerald: #064e3b;
+    --emerald-deep: #043628;
+
+    /* Semantic tokens (shadcn consumes these) */
+    --background: var(--white);
+    --foreground: var(--black);
+
+    --primary: var(--emerald);
+    --primary-foreground: var(--white);
+
+    --border: rgba(0, 0, 0, 0.12);
+    --ring: var(--emerald);
+
+    --radius: 0.625rem;
+}
+
+.dark {
+    --background: var(--emerald-deep);
+    --foreground: var(--white);
+
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+
+    --primary: var(--white);
+    --primary-foreground: var(--emerald-deep);
+
+    --border: rgba(255, 255, 255, 0.15);
+    --ring: var(--white);
+}
+
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-border: var(--border);
+    --color-ring: var(--ring);
+
+    --radius-lg: var(--radius);
+}
+
+@layer base {
+    body {
+        background-color: var(--background);
+        color: var(--foreground);
+    }
+
+    * {
+        border-color: var(--border);
+    }
+}
+
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground)) var(--scrollbar-color-bg);
+}
+
+*::-webkit-scrollbar {
+    width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--scrollbar-color-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #f59e0b, #fbbf24);
+    border-radius: 3px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+.nav-link {
+    position: relative;
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 0.125rem;
+    background-color: var(--primary);
+    transform: scaleX(0);
+    transition: transform 0.3s ease-in-out;
+    transform-origin: right;
+}
+
+.nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.nav-link-active {
+    position: relative;
+}
+
+.nav-link-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 0.125rem;
+    background-color: var(--primary);
+    transform: scaleX(1);
+    transform-origin: left;
+}
