@@ -18,17 +18,17 @@ export default function ContactPage() {
         <div className="mx-auto max-w-7xl px-4 grid gap-20 md:grid-cols-2">
           {/* Contact Details */}
           <div>
-            <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
+            <h2 className="mb-2 text-2xl font-semibold font-['Playfair_Display']">
               Get in Touch
             </h2>
 
-            <p className="mb-8 text-base leading-relaxed text-gray-700">
+            <p className="mb-6 text-base leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
               For product enquiries, export requirements, or partnership
               discussions, please reach out using the details below or submit
               the enquiry form. Our team will respond promptly.
             </p>
 
-            <div className="space-y-4 text-base text-gray-700">
+            <div className="space-y-1 text-base text-gray-700">
               <p>
                 <strong>Location:</strong> Kakinada, Andhra Pradesh, India
               </p>
@@ -40,9 +40,9 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="mt-10 border-l-2 border-emerald-500 pl-6">
+            <div className="mt-6 border-l-2 border-emerald-500 pl-4">
               <p className="text-sm text-gray-700">
-                Business Hours: <br />
+                <strong>Business Hours:</strong> <br />
                 Monday – Saturday, 9:00 AM – 7:00 PM (IST)
               </p>
             </div>
@@ -54,47 +54,47 @@ export default function ContactPage() {
               Send Us an Enquiry
             </h2>
 
-            <form className="space-y-6">
+            <form className="space-y-3">
               <input
                 type="text"
                 placeholder="Full Name"
-                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-600"
               />
 
               <input
                 type="email"
                 placeholder="Email Address"
-                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-600"
               />
 
               <input
                 type="text"
                 placeholder="Product Interested In"
-                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-600"
               />
 
               <input
                 type="text"
                 placeholder="Quantity Required"
-                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-600"
               />
 
               <input
                 type="text"
                 placeholder="Target Country"
-                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-600"
               />
 
               <input
                 type="text"
                 placeholder="Packaging Requirements"
-                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-600"
               />
 
               <input
                 type="text"
                 placeholder="Expected Delivery Timeline"
-                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
+                className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-emerald-600"
               />
 
               <textarea
@@ -104,10 +104,15 @@ export default function ContactPage() {
               />
 
               <button
-                type="submit"
-                className="bg-emerald-500 px-10 py-4 text-sm font-medium text-black transition hover:bg-emerald-400"
+                className="
+        relative overflow-hidden inline-flex items-center
+        px-10 py-3 text-sm font-medium
+        bg-emerald-500 text-black hover:text-primary-foreground
+        group sweep-button
+      "
               >
-                Submit Enquiry
+                {/* Text */}
+                <span className="z-10 flex items-center gap-1.5">Submit</span>
               </button>
             </form>
           </div>

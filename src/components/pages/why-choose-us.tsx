@@ -17,10 +17,10 @@ export default function WhyChooseUsPage() {
       <section className="py-28">
         <div className="mx-auto max-w-5xl px-4 space-y-20">
           <div>
-            <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
+            <h2 className="mb-2 text-2xl font-semibold font-['Playfair_Display']">
               Direct Farm & Coastal Sourcing
             </h2>
-            <p className="text-base md:text-lg leading-relaxed text-gray-700">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
               Phoenix International Trading works directly with certified farms
               and trusted coastal suppliers across India. This direct sourcing
               model ensures product freshness, traceability, and consistency
@@ -29,10 +29,10 @@ export default function WhyChooseUsPage() {
           </div>
 
           <div>
-            <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
+            <h2 className="mb-2 text-2xl font-semibold font-['Playfair_Display']">
               Multilayer Quality Control
             </h2>
-            <p className="text-base md:text-lg leading-relaxed text-gray-700">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
               Every product undergoes structured quality checks at multiple
               stages, including sourcing, processing, packaging, and final
               dispatch. This multilayer approach ensures that only export-grade
@@ -41,10 +41,10 @@ export default function WhyChooseUsPage() {
           </div>
 
           <div>
-            <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
+            <h2 className="mb-2 text-2xl font-semibold font-['Playfair_Display']">
               Export-Grade Packaging & Documentation
             </h2>
-            <p className="text-base md:text-lg leading-relaxed text-gray-700">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
               All shipments are handled with professional packaging solutions
               suitable for international transport. Phoenix manages complete
               export documentation, including phytosanitary certificates, health
@@ -54,10 +54,10 @@ export default function WhyChooseUsPage() {
           </div>
 
           <div>
-            <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
+            <h2 className="mb-2 text-2xl font-semibold font-['Playfair_Display']">
               Reliable Global Logistics
             </h2>
-            <p className="text-base md:text-lg leading-relaxed text-gray-700">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
               Phoenix coordinates air and sea freight operations to ensure
               timely and secure delivery. Our logistics planning focuses on
               maintaining product integrity throughout transit while meeting
@@ -66,10 +66,10 @@ export default function WhyChooseUsPage() {
           </div>
 
           <div>
-            <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
+            <h2 className="mb-2 text-2xl font-semibold font-['Playfair_Display']">
               Ethical & Transparent Trade Practices
             </h2>
-            <p className="text-base md:text-lg leading-relaxed text-gray-700">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
               We believe long-term global trade is built on transparency,
               ethical sourcing, and responsible operations. Phoenix maintains
               clear communication, accurate documentation, and dependable
@@ -86,7 +86,7 @@ export default function WhyChooseUsPage() {
             Global Supply Capability
           </h2>
 
-          <p className="mb-6 text-base md:text-lg leading-relaxed text-gray-700">
+          <p className="mb-3 text-base md:text-lg leading-relaxed text-gray-700">
             Phoenix International Trading supports global buyers with a
             structured export process designed to meet international quality,
             safety, and compliance standards. Our supply operations are aligned
@@ -94,18 +94,18 @@ export default function WhyChooseUsPage() {
             ensuring smooth customs clearance and reliable delivery.
           </p>
 
-          <p className="mb-10 text-base md:text-lg leading-relaxed text-gray-700">
+          <p className="mb-6 text-base md:text-lg leading-relaxed text-gray-700">
             From sourcing and packaging to documentation and dispatch, every
             shipment is managed with precision and accountability to support
             long-term partnerships across borders.
           </p>
 
-          <div className="grid gap-4 md:grid-cols-2 text-sm text-gray-700">
-            <span>• EU Trade Standards</span>
-            <span>• USFDA Regulations</span>
-            <span>• GCC Market Requirements</span>
-            <span>• Asian & African Market Compliance</span>
-          </div>
+          <ul className="grid gap-2 md:grid-cols-2 list-disc text-sm text-gray-700">
+            <li>EU Trade Standards</li>
+            <li>USFDA Regulations</li>
+            <li>GCC Market Requirements</li>
+            <li>Asian & African Market Compliance</li>
+          </ul>
         </div>
       </section>
 

@@ -21,13 +21,13 @@ export default function AboutPage() {
             <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
               Who We Are
             </h2>
-            <p className="text-base md:text-lg leading-relaxed text-gray-700">
-              Phoenix International Trading is an Indian export company
-              supplying high-quality agricultural produce, marine products, and
-              value-added food commodities to global markets. With sourcing
-              networks across key agricultural and coastal regions of India, we
-              work directly with certified farms and trusted suppliers to ensure
-              consistency, freshness, and compliance in every shipment.
+            <p className="text-base md:text-lg leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
+              Phoenix International Trading is a global export company
+              specialising in fresh agricultural produce, premium marine goods,
+              and high-quality dried & value-added food products. With trusted
+              sourcing networks across India and strong logistics partnerships,
+              we deliver products that meet international standards of
+              freshness, safety, and reliability.
             </p>
           </div>
 
@@ -37,7 +37,7 @@ export default function AboutPage() {
               <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
                 Our Vision
               </h2>
-              <p className="text-base leading-relaxed text-gray-700">
+              <p className="text-base leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
                 To become a globally trusted partner for the supply of fresh and
                 processed food products through long-term relationships and
                 dependable service.
@@ -48,7 +48,7 @@ export default function AboutPage() {
               <h2 className="mb-6 text-2xl font-semibold font-['Playfair_Display']">
                 Our Mission
               </h2>
-              <p className="text-base leading-relaxed text-gray-700">
+              <p className="text-base leading-relaxed text-gray-700 pl-3 border-l-3 border-primary">
                 To deliver reliable, sustainable, and export-grade produce that
                 meets international quality standards while supporting ethical
                 sourcing and transparent trade practices.
@@ -58,14 +58,14 @@ export default function AboutPage() {
 
           {/* What Makes Us Different */}
           <div>
-            <h2 className="mb-8 text-2xl font-semibold font-['Playfair_Display']">
+            <h2 className="mb-4 text-2xl font-semibold font-['Playfair_Display']">
               What Makes Us Different
             </h2>
-            <ul className="space-y-4 text-base text-gray-700">
-              <li>• Direct sourcing from certified farms and coastal hubs</li>
-              <li>• Structured quality checks at every stage</li>
-              <li>• Export-grade packaging and professional documentation</li>
-              <li>• Coordinated logistics for air and sea shipments</li>
+            <ul className="space-y-2 text-base list-decimal text-gray-700 pl-4">
+              <li>Direct sourcing from certified farms and coastal hubs</li>
+              <li>Structured quality checks at every stage</li>
+              <li>Export-grade packaging and professional documentation</li>
+              <li>Coordinated logistics for air and sea shipments</li>
             </ul>
           </div>
 

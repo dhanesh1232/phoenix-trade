@@ -54,7 +54,7 @@ function ButtonSweep({
       "
     >
       {/* Text */}
-      <span className="z-1 flex items-center gap-1.5">{children}</span>
+      <span className="z-10 flex items-center gap-1.5">{children}</span>
     </Link>
   );
 }
