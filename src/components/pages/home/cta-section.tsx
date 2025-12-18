@@ -1,4 +1,6 @@
 import Link from "next/link";
+import React from "react";
+import { FaWhatsapp } from "react-icons/fa";
 
 export const CTASection = () => {
   return (
@@ -14,16 +16,45 @@ export const CTASection = () => {
           Reliable sourcing. Consistent quality. Trusted global supply.
         </p>
 
-        {/* Action */}
-        <div className="mt-10">
-          <Link
-            href="/contact"
-            className="inline-block bg-emerald-500 px-10 py-4 text-sm font-medium text-black transition hover:bg-emerald-400"
-          >
-            Contact Us
-          </Link>
+        {/* Actions */}
+        <div className="mt-12 flex items-center justify-center gap-6">
+          {/* CONTACT BUTTON */}
+          <ButtonSweep href="/contact">Contact Us</ButtonSweep>
+
+          {/* WHATSAPP BUTTON */}
+          <ButtonSweep href="https://wa.me/917382675969" target="_blank">
+            <FaWhatsapp className="inline-block text-xl" />
+            WhatsApp
+          </ButtonSweep>
         </div>
       </div>
     </section>
   );
 };
+
+/* PREMIUM BUTTON WITH ONE-WAY SWEEP */
+function ButtonSweep({
+  href,
+  children,
+  target,
+}: {
+  href: string;
+  children?: React.ReactNode;
+  target?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      target={target}
+      className="
+        relative overflow-hidden inline-flex items-center
+        px-10 py-4 text-sm font-medium
+        bg-emerald-500 text-black hover:text-primary-foreground
+        group sweep-button
+      "
+    >
+      {/* Text */}
+      <span className="z-1 flex items-center gap-1.5">{children}</span>
+    </Link>
+  );
+}

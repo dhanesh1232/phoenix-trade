@@ -8,21 +8,21 @@ export const ProductCategoriesSection = () => {
       description:
         "Farm-fresh fruits and vegetables sourced directly from certified growers.",
       image: "/images/category-fresh.jpg",
-      href: "/products/fresh",
+      href: "/products/fresh-agriculture-produce",
     },
     {
       title: "Marine Products",
       description:
         "High-quality shrimp and fish processed under international standards.",
       image: "/images/category-marine.avif",
-      href: "/products/marine",
+      href: "/products/marine-products",
     },
     {
       title: "Dried & Value-Added Products",
       description:
         "Processed powders, nuts, and natural sweeteners for global markets.",
       image: "/images/category-dried.jpg",
-      href: "/products/dried",
+      href: "/products/dried-value-added-products",
     },
   ];
 

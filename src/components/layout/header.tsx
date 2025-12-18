@@ -71,22 +71,38 @@ export default function Header() {
                       </NavigationMenuLink>
                     ) : (
                       <>
-                        <NavigationMenuTrigger className="px-2 cursor-pointer py-0 nav-link text-sm font-medium tracking-wide transition-colors bg-transparent hover:text-primary">
+                        <NavigationMenuTrigger
+                          className={`px-2 ${
+                            path === link.href || path.startsWith(link.href)
+                              ? "nav-link-active text-primary"
+                              : "nav-link"
+                          } cursor-pointer py-0 nav-link text-sm font-medium tracking-wide transition-colors bg-transparent hover:text-primary`}
+                        >
                           {link.label}
                         </NavigationMenuTrigger>
 
                         <NavigationMenuContent className="bg-background rounded-lg shadow-lg">
-                          <ul className="w-72 py-2">
+                          <ul className="w-72 py-2 space-y-1.5">
                             {link.subPages.map((sub) => (
                               <li key={sub.href}>
                                 <NavigationMenuLink
                                   href={sub.href}
-                                  className="group block px-4 py-3 text-sm transition-colors hover:bg-primary hover:text-primary-foreground"
+                                  className={`group block px-4 py-2 text-sm ease-in-out duration-300 transition-colors ${
+                                    path === sub.href
+                                      ? "bg-primary text-primary-foreground"
+                                      : "hover:bg-primary/10 focus:bg-primary/10 hover:text-primary"
+                                  } `}
                                 >
                                   <span className="flex items-center justify-between">
                                     <span>{sub.label}</span>
 
-                                    <ChevronRight className="h-4 w-4 text-primary-foreground opacity-0 -translate-x-1 transition-all duration-300 group-hover:opacity-100 animate-pulse group-hover:translate-x-0" />
+                                    <ChevronRight
+                                      className={`h-4 w-4 transition-all duration-300 ${
+                                        path === sub.href
+                                          ? "translate-x-0 opacity-100 text-primary-foreground animate-pulse"
+                                          : "opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 group-hover:text-primary"
+                                      } `}
+                                    />
                                   </span>
                                 </NavigationMenuLink>
                               </li>
@@ -102,7 +118,7 @@ export default function Header() {
 
             {/* Mobile Toggle */}
             <button
-              className="md:hidden p-1 hover:bg-primary/95 transform transition-color cursor-pointer ease-in-out duration-200 hover:text-primary-foreground"
+              className="md:hidden p-1 hover:bg-primary/75 hover:focus:bg-primary/80 transform transition-color cursor-pointer ease-in-out duration-200 hover:text-primary-foreground"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
@@ -142,6 +158,7 @@ function MobileDrawer({
   open: boolean;
   onClose: () => void;
 }) {
+  const path = usePathname();
   const [active, setActive] = React.useState<string | null>(null);
 
   const toggle = (href: string) => {
@@ -177,13 +194,17 @@ function MobileDrawer({
                     <Link
                       href={link.href}
                       onClick={onClose}
-                      className="
+                      className={`
                         block rounded-md
                         px-3 py-2
                         text-base
                         transition-colors
-                        hover:bg-primary hover:text-primary-foreground
-                      "
+                       ${
+                         path === link.href
+                           ? "bg-primary text-primary-foreground"
+                           : "hover:bg-primary hover:text-primary-foreground"
+                       }
+                      `}
                     >
                       {link.label}
                     </Link>
@@ -193,14 +214,19 @@ function MobileDrawer({
                       <button
                         type="button"
                         onClick={() => toggle(link.href)}
-                        className="
+                        className={`
                           flex w-full items-center justify-between
                           rounded-md
                           px-3 py-2.5
                           text-xs font-semibold uppercase tracking-widest
-                          transition-colors
-                          hover:bg-primary hover:text-primary-foreground
-                        "
+                          transition-colors cursor-pointer
+                          
+                          ${
+                            path === link.href || path.startsWith(link.href)
+                              ? "bg-primary text-primary-foreground"
+                              : "hover:bg-primary hover:text-primary-foreground"
+                          }
+                        `}
                       >
                         <span>{link.label}</span>
                         <ChevronDown
@@ -215,25 +241,29 @@ function MobileDrawer({
                       <AnimatePresence initial={false}>
                         {active === link.href && (
                           <motion.div
-                            className="pl-4 overflow-hidden"
+                            className="pl-3 mt-1.5 overflow-hidden"
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                           >
-                            <div className="py-1 space-y-1">
+                            <div className="py-1 space-y-1 pl-0.5 border-l-[3px] border-emerald-500">
                               {link.subPages.map((sub) => (
                                 <Link
                                   key={sub.href}
                                   href={sub.href}
                                   onClick={onClose}
-                                  className="
+                                  className={`
                                     block rounded-md
                                     px-3 py-1.5
                                     text-sm
                                     transition-colors
-                                    hover:bg-primary/90 hover:text-primary-foreground
-                                  "
+                                    ${
+                                      path === sub.href
+                                        ? "bg-primary/85 text-primary-foreground"
+                                        : "hover:bg-primary/10 focus:bg-primary/10 hover:text-primary"
+                                    }
+                                  `}
                                 >
                                   {sub.label}
                                 </Link>
