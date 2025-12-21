@@ -37,11 +37,17 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  if (path.startsWith("/phoenix-admin-panel-9753") || path === "/not-found") {
+    return null;
+  }
+
   return (
     <>
       <header
         className={cn(
-          path === "/" ? "fixed" : "sticky",
+          path === "/"
+            ? "fixed"
+            : "sticky bg-background backdrop-blur supports-backdrop-filter:bg-background",
           "left-0 right-0 top-0 z-50 w-full border-b transition-all duration-300",
           scrolled || menuOpen
             ? "bg-background backdrop-blur supports-backdrop-filter:bg-background"

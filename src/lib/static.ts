@@ -23,6 +23,34 @@ export const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
+export const adminLinks = [
+  {
+    title: "Dashboard",
+    url: "/",
+    icon: "dashboard",
+  },
+  {
+    title: "Products",
+    url: "/products",
+    icon: "package",
+  },
+  {
+    title: "Category",
+    url: "/categories",
+    icon: "collection",
+  },
+  {
+    title: "Content",
+    url: "/content",
+    icon: "template", // For manage about-us, why-choose, global-supply pages
+  },
+  {
+    title: "Profile",
+    url: "/profile",
+    icon: "user",
+  },
+];
+
 export const brand = {
   emeraldDark: "#064E3B", // primary (emerald-900)
   emerald: "#047857", // hover / accent (emerald-700)

@@ -1,8 +1,10 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const quickLinks = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
+  { label: "About Us", href: "/about-us" },
   { label: "Why Choose Us", href: "/why-choose-us" },
   { label: "Contact", href: "/contact" },
 ];
@@ -23,6 +25,12 @@ const productLinks = [
 ];
 
 export const Footer = () => {
+  const path = usePathname();
+
+  if (path.startsWith("/phoenix-admin-panel-9753") || path === "/not-found") {
+    return null;
+  }
+
   return (
     <footer className="bg-black text-gray-300 border-t border-gray-800">
       {/* Main Footer */}

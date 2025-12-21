@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FaWhatsapp } from "react-icons/fa";
 
 export const WhatsAppFloatingButton = () => {
+  const path = usePathname();
+
+  if (path.startsWith("/phoenix-admin-panel-9753") || path === "/not-found") {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <Link
@@ -17,7 +24,10 @@ export const WhatsAppFloatingButton = () => {
         </span>
 
         {/* Animated border circle */}
-        <svg className="absolute inset-0 w-16 h-16" viewBox="0 0 100 100">
+        <svg
+          className="absolute inset-0 w-10 h-10 md:w-14 md:h-14"
+          viewBox="0 0 100 100"
+        >
           <circle
             cx="50"
             cy="50"
@@ -38,12 +48,12 @@ export const WhatsAppFloatingButton = () => {
         </svg>
         <span
           className="z-10
-            w-16 h-16 rounded-full flex items-center justify-center
+            w-10 md:w-14 h-10 md:h-14 rounded-full flex items-center justify-center
             bg-emerald-600 text-white shadow-lg 
             hover:scale-110 transition-transform hover:bg-[#34d399] hover:text-[#064e3b]
           "
         >
-          <FaWhatsapp size={28} />
+          <FaWhatsapp className="text-xl md:text-2xl" />
         </span>
       </Link>
     </div>
