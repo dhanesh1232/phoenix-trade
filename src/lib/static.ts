@@ -39,11 +39,11 @@ export const adminLinks = [
     url: "/categories",
     icon: "collection",
   },
-  {
-    title: "Content",
-    url: "/content",
-    icon: "template", // For manage about-us, why-choose, global-supply pages
-  },
+  // {
+  //   title: "Content",
+  //   url: "/content",
+  //   icon: "template", // For manage about-us, why-choose, global-supply pages
+  // },
   {
     title: "Profile",
     url: "/profile",
