@@ -7,16 +7,19 @@ import { Footer } from "./footer";
 import { WhatsAppFloatingButton } from "../global/whatsapp-button";
 import { WhatsAppFloatingV2 } from "../global/whatsapp-floating-v2";
 import { Toaster } from "../ui/sonner";
+import { SessionProvider } from "next-auth/react";
 
 export default function Main({ children }: { children: ReactNode }) {
   return (
-    <AppProvider>
-      <Header />
-      <main className="min-h-screen z-0 bg-white text-black">{children}</main>
-      <Footer />
-      <Toaster position="top-right" />
-      <WhatsAppFloatingButton />
-      {/* <WhatsAppFloatingV2 /> */}
-    </AppProvider>
+    <SessionProvider>
+      <AppProvider>
+        <Header />
+        <main className="min-h-screen z-0 bg-white text-black">{children}</main>
+        <Footer />
+        <Toaster position="top-right" />
+        <WhatsAppFloatingButton />
+        {/* <WhatsAppFloatingV2 /> */}
+      </AppProvider>
+    </SessionProvider>
   );
 }

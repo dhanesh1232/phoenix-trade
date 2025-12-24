@@ -10,15 +10,15 @@ export default function SessionLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SessionProvider>
+    <>
       <MainLayout>{children}</MainLayout>
-    </SessionProvider>
+    </>
   );
 }
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
-  console.log(session);
+
   if (session?.user) {
     return (
       <SidebarProvider>

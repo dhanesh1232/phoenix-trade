@@ -1,10 +1,14 @@
 import {
   BookTemplate,
+  CornerDownLeft,
+  Info,
   Layers2,
   LayoutDashboard,
   Notebook,
   Package,
+  Trash2,
   User,
+  X,
 } from "lucide-react";
 import { FaShippingFast } from "react-icons/fa";
 
@@ -15,4 +19,8 @@ export const Icons = {
   collection: Layers2,
   user: User,
   template: Notebook,
+  cornerDownLeft: CornerDownLeft,
+  x: X,
+  trash2: Trash2,
+  info: Info,
 } as const;

@@ -1,103 +1,285 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Search,
+  Plus,
+  Pencil,
+  Trash2,
+  Upload,
+  X,
+  Image as ImageIcon,
+} from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { CategoryDialog } from "@/components/pages/admin/pages/add-category";
+import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function CategoriesPage() {
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const [onEdit, setOnEdit] = useState<CategoryFormValues | null>();
+  const [categories, setCategories] = useState<CategoryFormValues[]>([]);
+
+  // Filter categories based on search
+  const filteredCategories = categories.filter(
+    (cat) =>
+      cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cat.slug.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+
+        setCategories(data.data.categories);
+      } catch (err: unknown) {
+        const er = err as Error;
+        toast.error(er.message);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Handle form submission
+  const handleCreateCategory = async (values: CategoryFormValues) => {
+    try {
+      setIsCreating(true);
+      console.log(values);
+      const res = await fetch("/api/categories", {
+        method: onEdit ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to create category");
+      }
+
+      toast.success(data.message || "Category created successfully");
+      console.log(data.data);
+
+      setCategories((prev) => {
+        const exists = prev.some((cat) => cat._id === data.data._id);
+        if (exists) {
+          return prev.map((cat) =>
+            cat._id === data.data._id ? data.data : cat
+          );
+        }
+        return [...prev, data.data];
+      });
+      setOpen(false);
+    } catch (err: unknown) {
+      const er = err as Error;
+      toast.error(er.message);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleDeleteCategory = async (id: string) => {
+    try {
+      const res = await fetch(`/api/categories/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to delete category");
+      }
+
+      // API returns remaining categories
+      setCategories(data.categories);
+      toast.success(data.message || "Category deleted successfully");
+    } catch (err: unknown) {
+      const er = err as Error;
+      toast.error(er.message);
+    }
+  };
 
   return (
-    <div className="max-w-5xl w-full mx-auto space-y-10">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-['Playfair_Display'] tracking-wide">
-          Categories
-        </h1>
-        <Button
-          onClick={() => setOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
-        >
-          Add Category
-        </Button>
+    <div className="max-w-7xl w-full mr-auto space-y-4 px-3 py-4 sm:px-4">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold font-['Playfair_Display'] tracking-wide">
+            Categories
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            Manage your product categories
+          </p>
+        </div>
+        <CategoryDialog
+          open={open}
+          setOpen={() => {
+            setOpen(!open);
+            if (onEdit) {
+              setOnEdit(null);
+            }
+          }}
+          mode={onEdit ? "edit" : "create"}
+          initialValues={onEdit ?? { name: "", slug: "", image: null }}
+          onSubmit={(values) => {
+            handleCreateCategory(values);
+          }}
+          isSubmitting={isCreating}
+        />
+      </div>
+
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+        <Input
+          placeholder="Search categories by name or slug..."
+          className="pl-10 bg-background border-border"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
 
       {/* Categories Table */}
-      <Card className="border-border bg-background">
-        <CardHeader>
-          <CardTitle className="text-lg">All Categories</CardTitle>
+      <Card className="border-border bg-background py-0 p-0 gap-0 rounded w-full">
+        <CardHeader className="px-4 py-3">
+          <CardTitle className="text-lg flex items-center justify-between">
+            <span>All Categories ({filteredCategories.length})</span>
+          </CardTitle>
         </CardHeader>
 
-        <CardContent>
-          <div className="border border-border rounded-md overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-muted border-b border-border">
-                <tr>
-                  <th className="p-3 text-left">Name</th>
-                  <th className="p-3 text-left">Slug</th>
-                  <th className="p-3 text-right">Actions</th>
-                </tr>
-              </thead>
+        <CardContent className="p-0 w-full">
+          {/* Responsive wrapper */}
+          <div className="w-full overflow-x-auto">
+            <Table className="min-w-full text-sm">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="whitespace-nowrap">ID</TableHead>
+                  <TableHead className="whitespace-nowrap">Image</TableHead>
+                  <TableHead className="whitespace-nowrap">Name</TableHead>
+                  <TableHead className="whitespace-nowrap">Slug</TableHead>
+                  <TableHead className="whitespace-nowrap">
+                    Created At
+                  </TableHead>
+                  <TableHead className="text-right whitespace-nowrap">
+                    Actions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
 
-              <tbody>
-                {/* Static Placeholder */}
-                <tr>
-                  <td className="p-3">Fresh Produce</td>
-                  <td className="p-3">fresh-produce</td>
-                  <td className="p-3 text-right">
-                    <Button variant="ghost" className="text-primary">
-                      Edit
-                    </Button>
-                    <Button variant="ghost" className="text-red-500">
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
+              <TableBody>
+                {filteredCategories.length ? (
+                  filteredCategories.map(
+                    (category: CategoryFormValues, ind) => (
+                      <TableRow key={category._id} className="space-x-0">
+                        <TableCell className="text-muted-foreground">
+                          #{ind + 1}
+                        </TableCell>
 
-                <tr>
-                  <td className="p-3">Marine Products</td>
-                  <td className="p-3">marine-products</td>
-                  <td className="p-3 text-right">
-                    <Button variant="ghost" className="text-primary">
-                      Edit
-                    </Button>
-                    <Button variant="ghost" className="text-red-500">
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                        <TableCell className="w-10 h-10">
+                          <Avatar className="w-10 h-10 rounded-md border border-primary">
+                            <AvatarImage
+                              src={category.image?.url || ""}
+                              alt={category.name}
+                              className="object-cover"
+                            />
+                            <AvatarFallback className="rounded-md bg-muted">
+                              <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                            </AvatarFallback>
+                          </Avatar>
+                        </TableCell>
+
+                        <TableCell className="font-medium max-w-32 truncate">
+                          {category.name}
+                        </TableCell>
+
+                        <TableCell className="text-muted-foreground max-w-32">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <code className="bg-muted px-2 py-1 rounded text-xs truncate inline-block max-w-full">
+                                {category.slug}
+                              </code>
+                            </TooltipTrigger>
+                            <TooltipContent>{category.slug}</TooltipContent>
+                          </Tooltip>
+                        </TableCell>
+
+                        <TableCell className="text-muted-foreground whitespace-nowrap">
+                          {category.createdAt
+                            ? new Date(category.createdAt).toLocaleDateString()
+                            : "-"}
+                        </TableCell>
+
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className="text-primary hover:bg-primary/10"
+                              onClick={() => {
+                                setOnEdit(category);
+                                setOpen(true);
+                              }}
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              onClick={() =>
+                                category._id &&
+                                handleDeleteCategory(category._id)
+                              }
+                              className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6}>
+                      <div className="flex flex-col items-center gap-2 py-10">
+                        <Search className="w-10 h-10 text-muted-foreground/50" />
+                        <p className="text-muted-foreground">
+                          No categories found
+                        </p>
+                        <p className="text-sm text-muted-foreground/70">
+                          Try adjusting your search query
+                        </p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
-
-      {/* Add Category Popup */}
-      {open && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md bg-background border-border">
-            <CardHeader>
-              <CardTitle>Add Category</CardTitle>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Category Name</label>
-                <Input className="mt-1 bg-background border-border" />
-              </div>
-
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-                <Button className="bg-primary text-primary-foreground">
-                  Save
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

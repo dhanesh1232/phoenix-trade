@@ -53,7 +53,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 
 // Data
@@ -124,7 +123,6 @@ const recentProducts = [
 ];
 
 export default function DashboardPage() {
-  const [timeRange, setTimeRange] = useState("6M");
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -139,11 +137,10 @@ export default function DashboardPage() {
 
   const totalProducts = 42;
   const activeProducts = 34;
-  const inactiveProducts = 5;
   const lowStockProducts = 3;
 
   return (
-    <div className="max-w-7xl w-full mx-auto space-y-6 px-4 py-6">
+    <div className="w-full mx-auto space-y-6 px-4 py-3">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-2">
@@ -236,134 +233,6 @@ export default function DashboardPage() {
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Area chart */}
-        <Card className="lg:col-span-2 border border-border/60 bg-card/95">
-          <CardHeader className="flex flex-row items-start justify-between gap-4 pb-3">
-            <div>
-              <CardTitle className="text-sm font-semibold tracking-[0.12em] uppercase">
-                Product Growth Trend
-              </CardTitle>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Monthly additions compared to targets.
-              </p>
-            </div>
-
-            {/* Time range pills */}
-            <div className="inline-flex items-center gap-1 rounded-md bg-muted px-1 py-1">
-              {["1M", "3M", "6M", "1Y"].map((range) => (
-                <Button
-                  key={range}
-                  variant={timeRange === range ? "default" : "ghost"}
-                  size="icon"
-                  onClick={() => setTimeRange(range)}
-                  className={
-                    timeRange === range
-                      ? "h-7 w-11 rounded-md bg-emerald-600 hover:bg-emerald-700 text-[11px] text-white"
-                      : "h-7 w-11 rounded-md text-[11px] text-muted-foreground"
-                  }
-                >
-                  {range}
-                </Button>
-              ))}
-            </div>
-          </CardHeader>
-
-          {/* inline legend */}
-          <div className="px-5 flex items-center gap-4 text-[11px] text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[oklch(0.696_0.17_162.48)]" />
-              <span>Actual</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[oklch(0.87_0.02_258.338)]" />
-              <span>Target</span>
-            </div>
-          </div>
-
-          <CardContent className="pt-3 pb-5 px-4">
-            {/* ✅ full‑width, fixed height container for ResponsiveContainer */}
-            <div className="w-full h-full" style={{ height: 260 }}>
-              <ChartContainer
-                config={{
-                  value: {
-                    label: "Products",
-                    color: "hsl(var(--chart-1))",
-                  },
-                  target: {
-                    label: "Target",
-                    color: "hsl(var(--muted-foreground))",
-                  },
-                }}
-                className="h-full w-full"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={monthlyData}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="rgba(148,163,184,0.18)"
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="month"
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{ fill: "rgba(148,163,184,0.9)", fontSize: 11 }}
-                      tickMargin={8}
-                    />
-                    <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{ fill: "rgba(148,163,184,0.9)", fontSize: 11 }}
-                      tickMargin={8}
-                    />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-
-                    <Area
-                      type="monotone"
-                      dataKey="target"
-                      stroke="oklch(0.87 0.02 258.338)"
-                      fill="none"
-                      strokeWidth={1.2}
-                      strokeDasharray="4 4"
-                    />
-
-                    <defs>
-                      <linearGradient
-                        id="colorValue"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="oklch(0.696 0.17 162.48)"
-                          stopOpacity={0.9}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="oklch(0.696 0.17 162.48)"
-                          stopOpacity={0}
-                        />
-                      </linearGradient>
-                    </defs>
-
-                    <Area
-                      type="monotone"
-                      dataKey="value"
-                      stroke="oklch(0.696 0.17 162.48)"
-                      fill="url(#colorValue)"
-                      strokeWidth={2}
-                      dot={{ r: 3, fill: "oklch(0.696 0.17 162.48)" }}
-                      activeDot={{ r: 5 }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Pie chart */}
         <Card className="border border-border/60 bg-card/95">
           <CardHeader className="pb-3">
@@ -427,121 +296,122 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Table */}
-      <Card className="border border-border/60 bg-card/90 py-0 p-4 gap-2">
-        <CardHeader className="px-0 flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-base font-semibold">
-              Recent Products
-            </CardTitle>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Latest items added to your inventory.
-            </p>
-          </div>
-          <Button variant="ghost" size="sm" className="gap-1 text-xs">
-            View all
-            <ChevronRight className="h-3 w-3" />
-          </Button>
-        </CardHeader>
-        <CardContent className="px-0">
-          <div className="rounded-md border border-border/60 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead>Product</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Stock</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredProducts.map((product) => (
-                  <TableRow key={product.id} className="group">
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-md bg-muted flex items-center justify-center">
-                          <Package className="h-4 w-4 text-muted-foreground" />
-                        </div>
-                        <div className="space-y-0.5">
-                          <p className="text-sm font-medium">{product.name}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-xs">
-                        {product.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Progress
-                          value={Math.min((product.stock / 150) * 100, 100)}
-                          className="h-1.5 w-20"
-                        />
-                        <span className="text-xs font-medium">
-                          {product.stock}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm font-medium">
-                      {product.price}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={
-                          product.status === "active"
-                            ? "bg-emerald-100 text-emerald-800 border-emerald-200"
-                            : product.status === "low"
-                            ? "bg-amber-100 text-amber-800 border-amber-200"
-                            : "bg-slate-100 text-slate-800 border-slate-200"
-                        }
-                      >
-                        {product.status.charAt(0).toUpperCase() +
-                          product.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {product.date}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" side="left">
-                          <DropdownMenuItem className="gap-2 text-xs">
-                            <Eye className="h-4 w-4" />
-                            View
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2 text-xs">
-                            <Edit className="h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2 text-xs text-red-600">
-                            <Trash2 className="h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+        {/* Table */}
+        <Card className="lg:col-span-2 border border-border/60 bg-card/90 py-0 p-4 gap-2">
+          <CardHeader className="px-0 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base font-semibold">
+                Recent Products
+              </CardTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Latest items added to your inventory.
+              </p>
+            </div>
+            <Button variant="ghost" size="sm" className="gap-1 text-xs">
+              View all
+              <ChevronRight className="h-3 w-3" />
+            </Button>
+          </CardHeader>
+          <CardContent className="px-0">
+            <div className="rounded-md border border-border/60 overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>Product</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Stock</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Action</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {filteredProducts.map((product) => (
+                    <TableRow key={product.id} className="group">
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-md bg-muted flex items-center justify-center">
+                            <Package className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                          <div className="space-y-0.5">
+                            <p className="text-sm font-medium">
+                              {product.name}
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-xs">
+                          {product.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Progress
+                            value={Math.min((product.stock / 150) * 100, 100)}
+                            className="h-1.5 w-20"
+                          />
+                          <span className="text-xs font-medium">
+                            {product.stock}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm font-medium">
+                        {product.price}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            product.status === "active"
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+                              : product.status === "low"
+                              ? "bg-amber-100 text-amber-800 border-amber-200"
+                              : "bg-slate-100 text-slate-800 border-slate-200"
+                          }
+                        >
+                          {product.status.charAt(0).toUpperCase() +
+                            product.status.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {product.date}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" side="left">
+                            <DropdownMenuItem className="gap-2 text-xs">
+                              <Eye className="h-4 w-4" />
+                              View
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2 text-xs">
+                              <Edit className="h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2 text-xs text-red-600">
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

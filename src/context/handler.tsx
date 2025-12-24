@@ -10,12 +10,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [heroPreview, setHeroPreview] =
     React.useState<HeroPreviewProps>("video");
 
+  const [categories, setCategories] = React.useState();
+  const fetchCategories = React.useCallback(async () => {
+    try {
+      const res = await fetch("/api/categories");
+      const data = await res.json();
+      setCategories(data.data.categories);
+    } catch (err: unknown) {
+      const e = err as Error;
+      console.log(e.message);
+    }
+  }, []);
+  React.useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
   return (
     <AppContext.Provider
       value={{
         menuOpen,
         setMenuOpen,
         HeroPreview: heroPreview,
+        categories,
       }}
     >
       {children}
