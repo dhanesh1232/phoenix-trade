@@ -1,5 +1,5 @@
 import {
-  BookTemplate,
+  ChevronDown,
   CornerDownLeft,
   Info,
   Layers2,
@@ -23,4 +23,5 @@ export const Icons = {
   x: X,
   trash2: Trash2,
   info: Info,
+  chevronDown: ChevronDown,
 } as const;

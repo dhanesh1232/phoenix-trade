@@ -49,7 +49,7 @@ declare global {
     category: string;
     categoryName?: string;
     shortDescription?: string;
-    description: string;
+    description: any;
     specifications: {
       origin: string;
       processingType: string;
@@ -102,6 +102,24 @@ declare global {
     placeholder?: string;
     label?: string;
     clearAll?: () => void;
+  }
+
+  interface MainToolbarProps {
+    onHighlighterClick: () => void;
+    onLinkClick: () => void;
+    isMobile: boolean;
+  }
+
+  type MobileToolbarContentType = "highlighter" | "link";
+
+  interface MobileToolbarContentProps {
+    type: MobileToolbarContentType;
+    onBack: () => void;
+  }
+
+  interface RichTextEditorProps {
+    content?: string;
+    onChange?: (value: string | any) => void;
   }
 }
 

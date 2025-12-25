@@ -66,7 +66,7 @@ function MediaType() {
           poster="/video_poster.png"
           className="w-full h-full object-cover"
         >
-          <source src="/video_banner_2_optimized.mp4" type="video/mp4" />
+          <source src="/new_export_clip.mp4" type="video/mp4" />
         </video>
       );
     case "video-slide":

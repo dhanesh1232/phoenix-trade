@@ -183,7 +183,7 @@ export default function ProfilePage() {
     <div className="max-w-5xl w-full p-3 lg:p-4 space-y-2">
       {/* Page Title */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-['Playfair_Display'] tracking-wide">
+        <h1 className="text-3xl font-['Playfair_Display'] text-foreground tracking-wide">
           Profile
         </h1>
         {hasUserChanges && (

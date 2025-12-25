@@ -13,7 +13,7 @@ const productApiSchema = z.object({
   slug: z.string().optional(),
   category: z.string().min(1),
   shortDescription: z.string().max(200),
-  description: z.string().min(1),
+  description: z.any(),
   specifications: z
     .object({
       origin: z.string().optional(),

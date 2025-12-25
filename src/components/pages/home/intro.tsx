@@ -1,6 +1,6 @@
 export const IntroSection = () => {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-background">
       <div className="mx-auto max-w-5xl px-4 text-center">
         {/* Section Label (Optional but premium) */}
         <p className="mb-4 text-sm tracking-widest uppercase text-emerald-600">
@@ -8,7 +8,7 @@ export const IntroSection = () => {
         </p>
 
         {/* Heading */}
-        <h2 className="text-3xl md:text-4xl font-semibold text-black font-['Playfair_Display']">
+        <h2 className="text-3xl md:text-4xl font-semibold text-foreground font-['Playfair_Display']">
           Trusted Produce for Every Market
         </h2>
 

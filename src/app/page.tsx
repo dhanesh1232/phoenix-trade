@@ -1,3 +1,4 @@
+import { BananaFiberShowcase } from "@/components/pages/home/banana-fabric";
 import { CTASection } from "@/components/pages/home/cta-section";
 import { GlobalSupplySection } from "@/components/pages/home/global-supply";
 import { HeroBanner } from "@/components/pages/home/hero";
@@ -16,6 +17,7 @@ export default function Page() {
       <ProductCategoriesSection />
       <WhyChooseSection />
       <div className="h-px bg-gray-200 max-w-7xl mx-auto" />
+      <BananaFiberShowcase />
       <GlobalSupplySection />
       <CTASection />
     </div>

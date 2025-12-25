@@ -30,7 +30,7 @@ export interface IProduct extends Document {
   slug: string;
   category: mongoose.Types.ObjectId;
   shortDescription: string;
-  description: string;
+  description: object;
   specifications: ProductSpecifications;
   availability: Availability;
   markets: Market[];
@@ -91,7 +91,7 @@ const ProductSchema = new Schema<IProduct>(
     },
 
     description: {
-      type: String,
+      type: Object,
       required: true,
     },
 

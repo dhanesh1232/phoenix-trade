@@ -38,6 +38,7 @@ import { ImageModal } from "@/components/pages/admin/layout/image-modal";
 import MultiWords from "@/components/pages/admin/pages/multi-words";
 import { useApp } from "@/context/handler";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TextEditor } from "@/components/tiptap-texteditor/tiptap-templates/simple/richtext-editor";
 
 // ========================
 // Zod schema & types
@@ -48,7 +49,7 @@ const productSchema = z.object({
   slug: z.string().optional(),
   category: z.string().min(1, "Category is required"),
   shortDescription: z.string().max(200, "Max 200 characters"),
-  description: z.string().min(1, "Description is required"),
+  description: z.any(),
   specifications: z.object({
     origin: z.string().optional(),
     processingType: z.string().optional(),
@@ -111,7 +112,7 @@ function mapInitialToFormValues(
     slug: initial.slug || "",
     category: initial.category || "",
     shortDescription: initial.shortDescription || "",
-    description: initial.description || "",
+    description: initial.description || null,
     specifications: initial.specifications || {
       origin: "",
       processingType: "",
@@ -160,7 +161,7 @@ export function AddProductPage({
       slug: "",
       category: "",
       shortDescription: "",
-      description: "",
+      description: null,
       specifications: {
         origin: "",
         processingType: "",
@@ -197,7 +198,6 @@ export function AddProductPage({
 
   const markets = watch("markets") || [];
   const certifications = watch("specifications.certifications") || [];
-  const applications = watch("specifications.applications") || [];
   const nameValue = watch("name");
   const shortDescValue = watch("shortDescription");
 
@@ -377,7 +377,9 @@ export function AddProductPage({
     toast.success("Changes reverted to last loaded product");
   };
 
-  const isLoadingUI = loading || !hydrated;
+  // Only use `hydrated` for edit mode.
+  // In create mode, show the empty form right away.
+  const isLoadingUI = loading || (!!initialProduct && !hydrated);
 
   if (isLoadingUI) {
     return <AddProductSkeleton />;
@@ -397,20 +399,20 @@ export function AddProductPage({
             >
               <MoveLeft className="text-muted-foreground" />
             </Button>
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight">
+            <div className="max-w-md">
+              <h1 className="text-xl font-bold tracking-tight">
                 {initialProduct && initialProduct?.id
                   ? "Update Product"
                   : "Add New Product"}
               </h1>
-              <p className="text-muted-foreground -mt-1 text-sm max-w-md">
+              <p className="text-muted-foreground -mt-1 text-sm max-w-sm">
                 Fill in the product details to create a new listing for your
                 store.
               </p>
             </div>
           </div>
 
-          <div className="flex gap-2 sm:gap-3">
+          <div className="flex gap-2 sm:gap-3 w-full max-w-md sm:justify-end flex-wrap">
             {initialProduct && (
               <Button
                 type="button"
@@ -418,8 +420,9 @@ export function AddProductPage({
                 variant="outline"
                 onClick={handleReload}
                 disabled={isSubmitting || !isChanged}
+                className="gap-1 cursor-pointer gap-1"
               >
-                <RefreshCcw className="w-4 h-4 mr-2 hidden sm:inline-block" />
+                <RefreshCcw className="w-4 h-4 hidden sm:inline-block" />
                 Reload
               </Button>
             )}
@@ -432,27 +435,28 @@ export function AddProductPage({
                 onSubmit({ ...data, status: "draft" })
               )}
               disabled={isSubmitting || !isChanged}
+              className="gap-1 cursor-pointer"
             >
               {isSubmitting ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <FileText className="w-4 h-4 mr-2" />
               )}
-              Save Draft
+              Draft
             </Button>
             <Button
               type="submit"
               size="sm"
               form="product-form"
               disabled={isSubmitting || !isChanged}
-              className="cursor-pointer"
+              className="cursor-pointer gap-1"
             >
               {isSubmitting ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
-                <Save className="w-4 h-4 mr-2" />
+                <Save className="w-4 h-4" />
               )}
-              {initialProduct ? "Update Product" : "Publish Product"}
+              {initialProduct ? "Update" : "Publish"}
             </Button>
           </div>
         </div>
@@ -616,41 +620,90 @@ export function AddProductPage({
             </CardContent>
           </Card>
 
-          {/* Content & Specifications */}
+          {/* Content */}
+          <Card className="p-4 rounded-md gap-2">
+            <CardHeader className="px-0">
+              <CardTitle>Product Description</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 px-0">
+              <div className="space-y-2">
+                <Label htmlFor="description">Description *</Label>
+                <TextEditor
+                  content={form.watch("description")}
+                  onChange={(e) => {
+                    console.log(e);
+                    setValue("description", e);
+                  }}
+                />
+              </div>
+
+              <MultiWords
+                defaultWords={form.watch("tags") || []}
+                placeholder="product, organic, fresh, natural"
+                label="Product Tags"
+                clearAll={() => setValue("tags", [])}
+                onChange={(tags: string[]) => setValue("tags", tags)}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Gallery & Specifications */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card className="p-4 rounded-md gap-2">
+            <Card className="p-4 gap-2 rounded-md">
               <CardHeader className="px-0">
-                <CardTitle>Product Description</CardTitle>
+                <CardTitle>Gallery Images</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 px-0">
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description *</Label>
-                  <Textarea
-                    id="description"
-                    {...form.register("description")}
-                    rows={10}
-                    className={cn("h-48 min-h-46 max-h-65 overflow-y-auto", {
-                      "ring-2 ring-destructive": errors.description,
-                    })}
-                    placeholder="Tell your customers about this product..."
-                  />
-                  {errors.description && (
-                    <p className="text-sm text-destructive">
-                      {errors.description.message}
-                    </p>
-                  )}
-                </div>
+                <div className="flex items-center flex-wrap gap-2 justify-start overflow-y-auto overflow-x-hidden">
+                  {(images.gallery?.length ?? 0) > 0 &&
+                    images.gallery.map((img) => (
+                      <div
+                        key={img.id}
+                        className="group relative w-20 h-20 rounded-md border-2 border-muted hover:border-primary transition-all duration-200 overflow-hidden"
+                      >
+                        <Image
+                          src={img.url}
+                          alt={img.fileName || img.name || "Product image"}
+                          fill
+                          className="object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon-sm"
+                          className="absolute top-1 right-1 h-5 w-5 bg-background hover:bg-accent/20 border border-red-500 rounded-full p-0 opacity-0 group-hover:opacity-100 hover:scale-110 transition-all"
+                          onClick={() => img?.id && removeGalleryImage(img.id)}
+                        >
+                          <Trash2 className="text-red-500" />
+                        </Button>
+                      </div>
+                    ))}
 
-                <MultiWords
-                  defaultWords={form.watch("tags") || []}
-                  placeholder="product, organic, fresh, natural"
-                  label="Product Tags"
-                  clearAll={() => setValue("tags", [])}
-                  onChange={(tags: string[]) => setValue("tags", tags)}
-                />
+                  {/* Add more tile */}
+                  <div className="w-20 h-20">
+                    <ImageModal
+                      trigger
+                      open={imageModalOpen.gallery}
+                      setOpen={() =>
+                        setImageModalOpen((prev) => ({
+                          ...prev,
+                          gallery: !prev.gallery,
+                        }))
+                      }
+                      selected={images.gallery}
+                      multiple
+                      onInsert={(imgs) =>
+                        setImages((prev) => ({
+                          ...prev,
+                          gallery: imgs as ImageFormat[],
+                        }))
+                      }
+                      className="w-20 h-20"
+                    />
+                  </div>
+                </div>
               </CardContent>
             </Card>
-
             <Card className="p-4 gap-2 rounded-md">
               <CardHeader className="px-0">
                 <CardTitle>Specifications</CardTitle>
@@ -681,7 +734,7 @@ export function AddProductPage({
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                {/* <div className="space-y-3">
                   <Label>Applications</Label>
                   <MultiWords
                     defaultWords={applications}
@@ -690,67 +743,10 @@ export function AddProductPage({
                       setValue("specifications.applications", apps)
                     }
                   />
-                </div>
+                </div> */}
               </CardContent>
             </Card>
           </div>
-
-          {/* Gallery */}
-          <Card className="p-4 gap-2 rounded-md">
-            <CardHeader className="px-0">
-              <CardTitle>Gallery Images</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 px-0">
-              <div className="flex items-center gap-2 justify-start overflow-x-auto">
-                {(images.gallery?.length ?? 0) > 0 &&
-                  images.gallery.map((img) => (
-                    <div
-                      key={img.id}
-                      className="group relative w-20 h-20 rounded-md border-2 border-muted hover:border-primary transition-all duration-200 overflow-hidden"
-                    >
-                      <Image
-                        src={img.url}
-                        alt={img.fileName || img.name || "Product image"}
-                        fill
-                        className="object-cover"
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon-sm"
-                        className="absolute top-1 right-1 h-5 w-5 bg-background hover:bg-accent/20 border border-red-500 rounded-full p-0 opacity-0 group-hover:opacity-100 hover:scale-110 transition-all"
-                        onClick={() => img?.id && removeGalleryImage(img.id)}
-                      >
-                        <Trash2 className="text-red-500" />
-                      </Button>
-                    </div>
-                  ))}
-
-                {/* Add more tile */}
-                <div className="w-20 h-20">
-                  <ImageModal
-                    trigger
-                    open={imageModalOpen.gallery}
-                    setOpen={() =>
-                      setImageModalOpen((prev) => ({
-                        ...prev,
-                        gallery: !prev.gallery,
-                      }))
-                    }
-                    selected={images.gallery}
-                    multiple
-                    onInsert={(imgs) =>
-                      setImages((prev) => ({
-                        ...prev,
-                        gallery: imgs as ImageFormat[],
-                      }))
-                    }
-                    className="w-20 h-20"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Availability */}
           <div className="flex items-center justify-between rounded-md border px-3 py-2">
@@ -853,6 +849,7 @@ export function AddProductPage({
                     setMetaDescriptionTouched(true);
                     setValue("seo.metaDescription", e.target.value);
                   }}
+                  className="max-h-25 min-h-20 overflow-y-auto resize-none"
                   placeholder="Short description for search engines"
                 />
               </div>
@@ -895,7 +892,7 @@ function AddProductSkeleton() {
   return (
     <div className="min-h-full bg-background">
       {/* Header skeleton */}
-      <div className="border-b border-border py-2 px-4 sticky bg-background top-12.5 z-50">
+      <div className="border-b border-border py-2 px-4 sticky bg-background top-12 z-50">
         <div className="max-w-full flex items-start flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <Skeleton className="h-8 w-8 rounded-md" />

@@ -75,11 +75,12 @@ const MultiWords: React.FC<MultiWordsProps> = ({
         {keywords.length > 0 && (
           <Button
             onClick={clearAll}
-            size="icon-sm"
+            size="icon-xs"
             variant="outline-destructive"
             className="rounded-full"
             type="button"
             tabIndex={-1}
+            title="Clear all keywords"
           >
             <Icons.trash2 className="h-3 w-3 text-destructive/70" />
           </Button>
