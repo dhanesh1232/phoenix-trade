@@ -1,22 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Package,
   Activity,
   Boxes,
-  TrendingUp,
   PieChart as PieIcon,
   MoreVertical,
   ChevronRight,
-  AlertCircle,
   Search,
-  Filter,
-  Download,
-  Calendar,
   Eye,
   Edit,
-  Trash2,
+  RefreshCcw,
+  Loader2,
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,17 +21,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import {
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-} from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -53,359 +39,462 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Progress } from "@/components/ui/progress";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { SECRET_ADMIN_PATH } from "@/lib/validators_client";
 
-// Data
-const monthlyData = [
-  { month: "Jan", value: 12, target: 15 },
-  { month: "Feb", value: 18, target: 16 },
-  { month: "Mar", value: 9, target: 18 },
-  { month: "Apr", value: 15, target: 20 },
-  { month: "May", value: 22, target: 22 },
-  { month: "Jun", value: 19, target: 25 },
-  { month: "Jul", value: 24, target: 25 },
-  { month: "Aug", value: 27, target: 28 },
-];
-
-const categoryData = [
-  { name: "Fresh", value: 12, color: "oklch(0.696 0.17 162.48)" },
-  { name: "Marine", value: 8, color: "oklch(0.646 0.222 41.116)" },
-  { name: "Dried", value: 6, color: "oklch(0.627 0.194 16.439)" },
-  { name: "Frozen", value: 4, color: "oklch(0.585 0.233 277.117)" },
-];
-
-const recentProducts = [
-  {
-    id: 1,
-    name: "Fresh Banana",
-    category: "Fresh Produce",
-    status: "active",
-    date: "12 Jan 2025",
-    stock: 142,
-    price: "$2.99/kg",
-  },
-  {
-    id: 2,
-    name: "Vannamei Shrimp",
-    category: "Marine Products",
-    status: "inactive",
-    date: "10 Jan 2025",
-    stock: 0,
-    price: "$15.50/kg",
-  },
-  {
-    id: 3,
-    name: "Dried Anchovies",
-    category: "Dried Products",
-    status: "active",
-    date: "08 Jan 2025",
-    stock: 56,
-    price: "$8.75/kg",
-  },
-  {
-    id: 4,
-    name: "Atlantic Salmon",
-    category: "Marine Products",
-    status: "active",
-    date: "05 Jan 2025",
-    stock: 23,
-    price: "$22.99/kg",
-  },
-  {
-    id: 5,
-    name: "Organic Spinach",
-    category: "Fresh Produce",
-    status: "low",
-    date: "03 Jan 2025",
-    stock: 8,
-    price: "$4.50/kg",
-  },
-];
+interface DashboardData {
+  global: {
+    totalProducts: number;
+    totalCategories: number;
+    activeProducts: number;
+    draftProducts: number;
+    inactiveProducts: number;
+  };
+  categories: Array<{
+    _id: string;
+    name: string;
+    totalProducts: number;
+    activeProducts: number;
+    draftProducts: number;
+    inactiveProducts: number;
+  }>;
+  latestProducts: Array<{
+    id: string;
+    name: string;
+    category: string;
+    status: string;
+    createdAt: string;
+    markets: string[];
+    availability: string;
+  }>;
+}
 
 export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [summary, setSummary] = useState<DashboardData | null>(null);
+  const { data: session } = useSession();
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
+  const fetchSummary = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/summary");
+      const data = await res.json();
+
+      if (data.success) {
+        setSummary(data.data);
+      }
+    } catch (e: unknown) {
+      const er = e as Error;
+      console.error("Failed to fetch summary:", er.message);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const filteredProducts = recentProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    if (session?.user) {
+      fetchSummary();
+    }
+  }, [fetchSummary, session]);
 
-  const totalProducts = 42;
-  const activeProducts = 34;
-  const lowStockProducts = 3;
+  // Dynamic pie chart data from API
+  const categoryChartData = useMemo(() => {
+    if (!summary?.categories) return [];
+
+    return summary.categories.slice(0, 4).map((cat) => ({
+      name: cat.name,
+      value: cat.totalProducts,
+      color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+    }));
+  }, [summary?.categories]);
+
+  const filteredProducts = useMemo(() => {
+    if (!summary?.latestProducts) return [];
+    return summary.latestProducts.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [summary?.latestProducts, searchQuery]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "draft":
+        return "bg-amber-100 text-amber-800 border-amber-200";
+      case "inactive":
+        return "bg-slate-100 text-slate-800 border-slate-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const handleRefresh = () => {
+    fetchSummary();
+  };
 
   return (
-    <div className="w-full mx-auto space-y-6 px-4 py-3">
+    <div className="w-full mx-auto space-y-6 px-2 md:px-4 py-3">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-emerald-700 flex items-center justify-center">
-              <Package className="h-5 w-5 text-white" />
+          <div className="flex items-center gap-4">
+            <div className="h-8 w-8 lg:w-10 lg:h-10 rounded bg-linear-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg">
+              <Package className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-['Playfair_Display'] tracking-[0.12em] uppercase text-foreground">
-                Product Dashboard
+              <h1 className="text-xl lg:text-2xl font-['Playfair_Display'] tracking-tight">
+                Dashboard
               </h1>
               <p className="text-sm text-muted-foreground">
-                Inventory, categories and performance at a glance.
+                {summary?.global.totalProducts || 0} products across{" "}
+                {summary?.global.totalCategories || 0} categories
               </p>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Last updated{" "}
-            <span className="font-medium text-foreground">Today, 10:42 AM</span>
+            <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded-full">
+              {new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="relative w-full lg:w-72">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search products..."
-              className="pl-9"
+              placeholder="Search recent products..."
+              className="pl-11"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Filter className="h-4 w-4" />
-            Filter
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Calendar className="h-4 w-4" />
-            Date
-          </Button>
           <Button
+            variant="outline"
             size="sm"
-            className="gap-2 bg-emerald-600 hover:bg-emerald-700"
+            className="cursor-pointer"
+            onClick={handleRefresh}
+            disabled={isLoading}
           >
-            <Download className="h-4 w-4" />
-            Export
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Refreshing....
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <RefreshCcw className={`h-4 w-4`} />
+                Refresh
+              </span>
+            )}
           </Button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Products"
-          value={totalProducts}
-          change="+12%"
+          value={summary?.global.totalProducts || 0}
           trend="up"
           icon={<Package className="h-5 w-5" />}
-          color="bg-sky-500"
+          color="from-blue-500 to-blue-600"
           loading={isLoading}
         />
         <StatCard
-          title="Active Products"
-          value={activeProducts}
-          change="+8%"
+          title="Active"
+          value={summary?.global.activeProducts || 0}
           trend="up"
           icon={<Activity className="h-5 w-5" />}
-          color="bg-emerald-500"
+          color="from-emerald-500 to-emerald-600"
           loading={isLoading}
         />
         <StatCard
-          title="Low Stock"
-          value={lowStockProducts}
-          change="-2%"
-          trend="down"
-          icon={<AlertCircle className="h-5 w-5" />}
-          color="bg-amber-500"
+          title="Draft"
+          value={summary?.global.draftProducts || 0}
+          trend="up"
+          icon={<Boxes className="h-5 w-5" />}
+          color="from-amber-500 to-amber-600"
           loading={isLoading}
         />
         <StatCard
           title="Categories"
-          value={categoryData.length}
-          change="+1"
+          value={summary?.global.totalCategories || 0}
           trend="up"
-          icon={<Boxes className="h-5 w-5" />}
-          color="bg-purple-500"
+          icon={<PieIcon className="h-5 w-5" />}
+          color="from-purple-500 to-purple-600"
           loading={isLoading}
         />
       </div>
 
-      {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Pie chart */}
-        <Card className="border border-border/60 bg-card/95">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold tracking-[0.12em] uppercase">
-              Category Distribution
+      {/* Charts & Table */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Dynamic Category Pie Chart */}
+        <Card className="border rounded py-0 md:p-4 p-2 xl:col-span-1">
+          <CardHeader className="px-2">
+            <CardTitle className="text-lg font-semibold tracking-wide uppercase text-muted-foreground/80">
+              Category Breakdown
             </CardTitle>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Share of products by category.
+            <p className="text-sm text-muted-foreground">
+              Distribution of {summary?.global.totalProducts || 0} products
             </p>
           </CardHeader>
-          <CardContent className="pt-2 pb-5 px-4">
-            {/* ✅ same fixed height pattern */}
-            <div className="w-full" style={{ height: 220 }}>
-              <ChartContainer
-                config={{
-                  value: {
-                    label: "Products",
-                    color: "hsl(var(--chart-2))",
-                  },
-                }}
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categoryData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={48}
-                      outerRadius={78}
-                      paddingAngle={3}
-                      dataKey="value"
-                    >
-                      {categoryData.map((entry, index) => (
-                        <Cell key={index} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-y-2 text-[11px]">
-              {categoryData.map((category) => (
-                <div
-                  key={category.name}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: category.color }}
-                    />
-                    <span className="font-medium">{category.name}</span>
-                  </div>
-                  <span className="text-muted-foreground">
-                    {category.value} products
-                  </span>
+          <CardContent className="px-2">
+            {isLoading ? (
+              // Skeleton for Chart
+              <div className="space-y-4">
+                <div className="w-full h-[280px] flex items-center justify-center">
+                  <div className="w-44 h-44 rounded-full bg-muted animate-pulse" />
                 </div>
-              ))}
-            </div>
+                <div className="space-y-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="h-3 w-3 rounded-full bg-muted animate-pulse" />
+                        <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="h-4 w-8 bg-muted rounded animate-pulse ml-auto" />
+                        <div className="h-3 w-12 bg-muted/70 rounded animate-pulse ml-auto" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="w-full" style={{ height: 280 }}>
+                  <ChartContainer
+                    config={{ value: { color: "hsl(var(--chart-1))" } }}
+                    className="w-full h-full"
+                  >
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={categoryChartData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={85}
+                          paddingAngle={2}
+                          dataKey="value"
+                        >
+                          {categoryChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
+
+                <div className="mt-2">
+                  {categoryChartData.map((category, idx) => {
+                    const catData = summary?.categories[idx];
+                    return (
+                      <div
+                        key={category.name}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="h-3 w-3 rounded-full"
+                            style={{ backgroundColor: category.color }}
+                          />
+                          <span className="font-medium text-sm">
+                            {category.name}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-mono text-sm font-semibold">
+                            {category.value}
+                          </p>
+                          {catData && (
+                            <p className="text-xs text-muted-foreground">
+                              {catData.activeProducts} active
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
-        {/* Table */}
-        <Card className="lg:col-span-2 border border-border/60 bg-card/90 py-0 p-4 gap-2">
-          <CardHeader className="px-0 flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-base font-semibold">
-                Recent Products
-              </CardTitle>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Latest items added to your inventory.
-              </p>
+
+        {/* Recent Products Table */}
+        <Card className="border rounded py-0 pt-2 gap-2 xl:col-span-2">
+          <CardHeader className="px-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold">
+                  Recent Products ({filteredProducts.length})
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Latest {summary?.latestProducts.length || 0} additions
+                </p>
+              </div>
+              <Button asChild variant="outline" size="sm" className="gap-1">
+                <Link href={`/${SECRET_ADMIN_PATH}/products`}>
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
-            <Button variant="ghost" size="sm" className="gap-1 text-xs">
-              View all
-              <ChevronRight className="h-3 w-3" />
-            </Button>
           </CardHeader>
           <CardContent className="px-0">
-            <div className="rounded-md border border-border/60 overflow-hidden">
-              <Table>
+            <div className="overflow-x-auto">
+              <Table className="border-t">
                 <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead>Product</TableHead>
+                  <TableRow className="hover:bg-transparent border-b border-border/50">
+                    <TableHead className="w-48">Product</TableHead>
                     <TableHead>Category</TableHead>
-                    <TableHead>Stock</TableHead>
-                    <TableHead>Price</TableHead>
+                    <TableHead>Markets</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Action</TableHead>
+                    <TableHead>Added</TableHead>
+                    <TableHead className="w-16">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.map((product) => (
-                    <TableRow key={product.id} className="group">
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-md bg-muted flex items-center justify-center">
-                            <Package className="h-4 w-4 text-muted-foreground" />
+                  {isLoading ? (
+                    // Skeleton rows
+                    Array.from({ length: 5 }).map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-lg bg-muted animate-pulse" />
+                            <div className="h-4 w-32 bg-muted rounded animate-pulse" />
                           </div>
-                          <div className="space-y-0.5">
-                            <p className="text-sm font-medium">
-                              {product.name}
-                            </p>
+                        </TableCell>
+                        <TableCell>
+                          <div className="h-6 w-20 bg-muted rounded-full animate-pulse" />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <div className="h-5 w-12 bg-muted rounded animate-pulse" />
+                            <div className="h-5 w-12 bg-muted rounded animate-pulse" />
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="h-6 w-16 bg-muted rounded-full animate-pulse" />
+                        </TableCell>
+                        <TableCell>
+                          <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+                        </TableCell>
+                        <TableCell>
+                          <div className="h-9 w-9 bg-muted rounded animate-pulse" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : filteredProducts.length ? (
+                    filteredProducts.map((product) => (
+                      <TableRow
+                        key={product.id}
+                        className="group hover:bg-accent/30"
+                      >
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-muted to-muted-foreground/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                              <Package className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-medium text-sm truncate">
+                                {product.name}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-xs">
+                            {product.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          <div className="flex flex-wrap gap-1">
+                            {product.markets.slice(0, 2).map((market) => (
+                              <Badge
+                                key={market}
+                                variant="secondary"
+                                className="px-2 py-0.5 text-xs"
+                              >
+                                {market}
+                              </Badge>
+                            ))}
+                            {product.markets.length > 2 && (
+                              <Badge
+                                variant="outline"
+                                className="text-xs px-2 py-0.5"
+                              >
+                                +{product.markets.length - 2}
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(product.status)}>
+                            {product.status.charAt(0).toUpperCase() +
+                              product.status.slice(1)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-xs font-mono text-muted-foreground">
+                          {product.createdAt}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9"
+                              >
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem asChild className="gap-2">
+                                <Link
+                                  href={`/${SECRET_ADMIN_PATH}/products/${product.id}`}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                  View
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild className="gap-2">
+                                <Link
+                                  href={`/${SECRET_ADMIN_PATH}/products/${product.id}`}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                  Edit
+                                </Link>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-32 text-center py-8">
+                        <div className="space-y-2">
+                          <Package className="h-12 w-12 mx-auto text-muted-foreground/50" />
+                          <h3 className="text-lg font-medium text-muted-foreground">
+                            No recent products
+                          </h3>
+                          <p className="text-sm text-muted-foreground/70">
+                            Get started by adding your first product
+                          </p>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-xs">
-                          {product.category}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Progress
-                            value={Math.min((product.stock / 150) * 100, 100)}
-                            className="h-1.5 w-20"
-                          />
-                          <span className="text-xs font-medium">
-                            {product.stock}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm font-medium">
-                        {product.price}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            product.status === "active"
-                              ? "bg-emerald-100 text-emerald-800 border-emerald-200"
-                              : product.status === "low"
-                              ? "bg-amber-100 text-amber-800 border-amber-200"
-                              : "bg-slate-100 text-slate-800 border-slate-200"
-                          }
-                        >
-                          {product.status.charAt(0).toUpperCase() +
-                            product.status.slice(1)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {product.date}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                            >
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" side="left">
-                            <DropdownMenuItem className="gap-2 text-xs">
-                              <Eye className="h-4 w-4" />
-                              View
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-xs">
-                              <Edit className="h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-xs text-red-600">
-                              <Trash2 className="h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -416,10 +505,11 @@ export default function DashboardPage() {
   );
 }
 
+// StatCard component with skeleton loading
 interface StatCardProps {
   title: string;
   value: number;
-  change: string;
+  change?: string;
   trend: "up" | "down";
   icon: React.ReactNode;
   color: string;
@@ -432,43 +522,48 @@ function StatCard({
   change,
   trend,
   icon,
-  color,
   loading = false,
 }: StatCardProps) {
   return (
-    <Card className="border p-4 border-border/60 bg-card/90 shadow-sm hover:shadow-md transition-shadow">
-      <CardContent className="p-0 px-0 space-y-3">
+    <Card className="group rounded border p-4 gap-0 transition-all duration-300 hover:-translate-y-0.5 bg-linear-to-br from-background to-muted/30">
+      <CardContent className="p-0 space-y-2 px-0">
         {loading ? (
-          <div className="space-y-3">
-            <div className="h-3 w-1/2 rounded bg-muted animate-pulse" />
-            <div className="h-6 w-2/3 rounded bg-muted animate-pulse" />
-            <div className="h-3 w-1/3 rounded bg-muted animate-pulse" />
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
+              <div className="h-6 w-12 rounded-full bg-muted animate-pulse" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+              <div className="h-9 w-16 rounded bg-muted animate-pulse" />
+            </div>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between">
               <div
-                className={`h-10 w-10 rounded-lg ${color} flex items-center justify-center`}
+                className={`h-10 w-10 rounded-full bg-accent/50 flex items-center justify-center group-hover:scale-105 transition-transform`}
               >
-                <span className="text-white">{icon}</span>
+                {icon}
               </div>
-              <span
-                className={
-                  trend === "up"
-                    ? "text-xs font-medium text-emerald-600"
-                    : "text-xs font-medium text-red-600"
-                }
-              >
-                {change}
-              </span>
+              {change && (
+                <span
+                  className={`text-sm font-semibold px-2 py-1 rounded-full ${
+                    trend === "up"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {change}
+                </span>
+              )}
             </div>
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 {title}
               </p>
-              <p className="text-2xl font-semibold">{value}</p>
-              <p className="text-[11px] text-muted-foreground">
-                {change} vs last month
+              <p className="text-3xl lg:text-4xl font-bold bg-linear-to-r from-foreground to-primary bg-clip-text text-transparent">
+                {value}
               </p>
             </div>
           </>

@@ -6,60 +6,7 @@ import { ErrorHandles, SuccessHandles } from "@/lib/response";
 import { Product } from "@/models/product";
 import { getSessionServer } from "@/lib/auth";
 import { Types } from "mongoose";
-
-// reuse the same schema as POST
-const productApiSchema = z.object({
-  name: z.string().min(1),
-  slug: z.string().optional(),
-  category: z.string().min(1),
-  shortDescription: z.string().max(200),
-  description: z.any(),
-  specifications: z
-    .object({
-      origin: z.string().optional(),
-      processingType: z.string().optional(),
-      shelfLife: z.string().optional(),
-      certifications: z.array(z.string()).optional().default([]),
-      applications: z.array(z.string()).optional().default([]),
-    })
-    .optional()
-    .default(() => ({ certifications: [], applications: [] })),
-  availability: z.enum(["enquiry", "in_stock", "preorder"]),
-  markets: z
-    .array(z.enum(["EU", "GCC", "US", "ASEAN"]))
-    .optional()
-    .default([]),
-  tags: z.array(z.string()).optional().default([]),
-  status: z.enum(["active", "draft", "inactive"]).default("active"),
-  seo: z
-    .object({
-      metaTitle: z.string().optional(),
-      metaDescription: z.string().optional(),
-    })
-    .optional()
-    .default({}),
-  images: z.object({
-    featured: z
-      .object({
-        id: z.string(),
-        url: z.string().url(),
-        fileName: z.string().optional(),
-        name: z.string().optional(),
-      })
-      .optional(),
-    gallery: z
-      .array(
-        z.object({
-          id: z.string(),
-          url: z.string().url(),
-          fileName: z.string().optional(),
-          name: z.string().optional(),
-        })
-      )
-      .optional()
-      .default([]),
-  }),
-});
+import { productApiSchema } from "@/lib/product-schema";
 
 export async function PUT(
   req: NextRequest,
@@ -115,9 +62,10 @@ export async function PUT(
     existing.availability = data.availability;
     existing.markets = data.markets;
     existing.tags = data.tags;
-    existing.status = data.status === "inactive" ? "draft" : data.status;
+    existing.status = data.status;
     existing.images = data.images;
     existing.seo = data.seo;
+    existing.detailPage = data.detailPage;
 
     await existing.save();
 
@@ -181,12 +129,12 @@ export async function GET(
       seo: doc.seo,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
+      detailPage: doc.detailPage,
     };
 
     return SuccessHandles.Ok("Success", { product });
   } catch (err: unknown) {
     const e = err as Error;
-    console.log(e.message);
     return ErrorHandles.InternalServer(e.message);
   }
 }

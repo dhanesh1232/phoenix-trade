@@ -9,6 +9,7 @@ import {
   Search,
   Grid3X3,
   List,
+  RefreshCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -80,35 +81,32 @@ export const ImageModal: React.FC<ImageModalProps> = ({
     }
   }, [externalSelectedImages, open]);
 
+  const fetchImages = React.useCallback(async () => {
+    try {
+      setLoadingImages(true);
+      // match API: param is `q`, not `search`
+      const res = await fetch(
+        `/api/images?q=${encodeURIComponent(searchQuery)}&folder=phoenix`
+      );
+      if (!res.ok) throw new Error("Failed to fetch images");
+
+      const json = await res.json();
+      // your SuccessHandles.Ok returns `{ message, data }`
+      const list = json.data.images ?? [];
+
+      setImages(list);
+    } catch (err: unknown) {
+      const e = err as Error;
+      alert(e.message);
+    } finally {
+      setLoadingImages(false);
+    }
+  }, [searchQuery]);
+
   /** Simulated backend fetch */
   React.useEffect(() => {
-    setLoadingImages(true);
-
-    const fetchImages = async () => {
-      try {
-        // match API: param is `q`, not `search`
-        const res = await fetch(
-          `/api/images?q=${encodeURIComponent(searchQuery)}&folder=phoenix`
-        );
-        if (!res.ok) throw new Error("Failed to fetch images");
-
-        const json = await res.json();
-        // your SuccessHandles.Ok returns `{ message, data }`
-        const list = json.data.images ?? [];
-
-        setImages(list);
-      } catch (err: unknown) {
-        const e = err as Error;
-        alert(e.message);
-      } finally {
-        setLoadingImages(false);
-      }
-    };
-
     fetchImages();
-    // if you want live search, add searchQuery to deps:
-    // }, [searchQuery]);
-  }, [searchQuery]);
+  }, [searchQuery, fetchImages]);
 
   /** Upload Simulation */
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -252,29 +250,38 @@ export const ImageModal: React.FC<ImageModalProps> = ({
             </div>
 
             {/* View Toggle */}
-            <div className="flex border border-border rounded-md p-1 ml-3 shrink-0">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                data-active={viewMode === "grid"}
-                className={cn(
-                  "rounded-md transition-colors border-0 data-[active=true]:bg-accent"
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="sm" onClick={fetchImages}>
+                {loadingImages ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <RefreshCcw className="w-4 h-4" />
                 )}
-              >
-                <Grid3X3 className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode("list")}
-                data-active={viewMode === "list"}
-                className={cn(
-                  "p-1.5 rounded-md transition-colors border-0 data-[active=true]:bg-accent"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </Button>
+              <div className="flex border border-border rounded-md p-1 shrink-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  data-active={viewMode === "grid"}
+                  className={cn(
+                    "rounded-md transition-colors border-0 data-[active=true]:bg-accent"
+                  )}
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  data-active={viewMode === "list"}
+                  className={cn(
+                    "p-1.5 rounded-md transition-colors border-0 data-[active=true]:bg-accent"
+                  )}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </DialogHeader>

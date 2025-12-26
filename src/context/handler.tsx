@@ -10,6 +10,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [heroPreview, setHeroPreview] =
     React.useState<HeroPreviewProps>("video");
 
+  /* DATA */
   const [categories, setCategories] = React.useState();
   const fetchCategories = React.useCallback(async () => {
     try {

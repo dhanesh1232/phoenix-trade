@@ -29,6 +29,7 @@ declare global {
     image?: ImageFormat | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    description?: string;
   };
 
   type CategoryDialogProps = {
@@ -40,7 +41,7 @@ declare global {
     isSubmitting: boolean;
   };
 
-  type ProductStatus = "active" | "inactive";
+  type ProductStatus = "active" | "inactive" | "draft";
 
   type ProductFormValues = {
     id?: string;
@@ -65,6 +66,7 @@ declare global {
     images?: ProductImagesProps;
     seo: Metadata;
     createdAt?: string;
+    detailPage?: boolean;
   };
 
   type Market = "EU" | "GCC" | "US" | "ASEAN";

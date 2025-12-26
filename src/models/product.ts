@@ -2,7 +2,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export type Availability = "enquiry" | "in_stock" | "preorder";
-export type ProductStatus = "active" | "draft";
+export type ProductStatus = "active" | "draft" | "inactive";
 export type Market = "EU" | "GCC" | "US" | "ASEAN";
 
 export interface ProductImage {
@@ -41,6 +41,7 @@ export interface IProduct extends Document {
     gallery: ProductImage[];
   };
   seo?: ProductSEO;
+  detailPage: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -86,13 +87,13 @@ const ProductSchema = new Schema<IProduct>(
 
     shortDescription: {
       type: String,
-      maxlength: 200,
-      default: "",
+      maxlength: 400,
+      required: true,
     },
 
     description: {
       type: Object,
-      required: true,
+      default: "",
     },
 
     specifications: {
@@ -134,6 +135,10 @@ const ProductSchema = new Schema<IProduct>(
     seo: {
       type: SEOSchema,
       default: {},
+    },
+    detailPage: {
+      type: Boolean,
+      default: false,
     },
   },
   {

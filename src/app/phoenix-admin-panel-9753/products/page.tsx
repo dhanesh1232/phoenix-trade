@@ -22,6 +22,9 @@ import {
   LayoutList,
   LayoutGrid,
   MoreVertical,
+  RefreshCcw,
+  Loader2,
+  ArrowDownUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -143,25 +146,68 @@ export default function ProductsPage() {
   const activeCount = products.filter((p) => p.status === "active").length;
   const inactiveCount = products.length - activeCount;
 
-  const renderStatusBadge = (status: string) =>
-    status === "active" ? (
-      <Badge
-        variant="outline"
-        className="border-emerald-600/40 text-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-300"
-      >
-        Active
-      </Badge>
-    ) : (
-      <Badge
-        variant="outline"
-        className="border-slate-500/40 text-slate-700 bg-slate-50 dark:bg-slate-900/40 dark:text-slate-300"
-      >
-        Inactive
-      </Badge>
-    );
+  const showStatus = (status: string) => {
+    switch (status) {
+      case "active":
+        return (
+          <Badge
+            variant="outline"
+            className="border-emerald-600/40 text-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-300"
+          >
+            Active
+          </Badge>
+        );
+      case "draft":
+        return (
+          <Badge
+            variant="outline"
+            className="border-slate-500/40 text-slate-700 bg-slate-50 dark:bg-slate-900/40 dark:text-slate-300"
+          >
+            Draft
+          </Badge>
+        );
+      case "inactive":
+        return (
+          <Badge
+            variant="outline"
+            className="border-orange-500/40 text-orange-700 bg-slate-50 dark:bg-slate-900/40 dark:text-orange-300"
+          >
+            Inactive
+          </Badge>
+        );
+    }
+  };
 
   const thumbnailFor = (p: ProductFormValues) =>
     p.images?.featured?.thumbnail || p.images?.featured?.url || "";
+
+  // Add this function near the top with other handlers
+  const handleStatusChange = async (
+    productId: string,
+    newStatus: ProductStatus
+  ) => {
+    try {
+      const res = await fetch(`/api/products/${productId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Failed to update status");
+
+      // ✅ Fixed: proper array updater function
+      setProducts((prev) =>
+        prev.map((p) => (p.id === productId ? { ...p, status: newStatus } : p))
+      );
+
+      toast.success(`Status changed to ${newStatus}`);
+    } catch (error) {
+      const e = error as Error;
+      toast.error(e.message);
+    }
+  };
 
   return (
     <div className="w-full mr-auto space-y-4 px-2 md:px-4 py-2">
@@ -198,9 +244,22 @@ export default function ProductsPage() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            variant="outline"
+            className="cursor-pointer"
+            disabled={loading}
+            size="sm"
+            onClick={fetchProducts}
+          >
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RefreshCcw className="w-4 h-4" />
+            )}
+          </Button>
           {/* View toggle */}
-          <div className="hidden sm:flex items-center rounded-md border bg-background">
+          <div className="flex items-center rounded-md border bg-background">
             <Button
               type="button"
               variant={viewMode === "table" ? "default" : "ghost"}
@@ -341,97 +400,110 @@ export default function ProductsPage() {
                 </TableHeader>
 
                 <TableBody>
-                  {products.length ? (
-                    products.map((p, ind) => (
-                      <TableRow
-                        key={(p?.id ?? ind.toString()) + ind.toString()}
-                      >
-                        <TableCell className="w-40">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="w-10 h-10 rounded-md">
-                              <AvatarImage
-                                src={thumbnailFor(p)}
-                                alt={p.name}
-                                className="object-cover"
-                              />
-                              <AvatarFallback className="rounded-md bg-muted">
-                                <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                              </AvatarFallback>
-                            </Avatar>
+                  {products.length
+                    ? products.map((p, ind) => (
+                        <TableRow
+                          key={(p?.id ?? ind.toString()) + ind.toString()}
+                        >
+                          <TableCell className="w-40">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="w-10 h-10 rounded-md">
+                                <AvatarImage
+                                  src={thumbnailFor(p)}
+                                  alt={p.name}
+                                  className="object-cover"
+                                />
+                                <AvatarFallback className="rounded-md bg-muted">
+                                  <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                                </AvatarFallback>
+                              </Avatar>
 
-                            <div className="flex flex-col gap-0.5 min-w-0">
-                              <div className="flex items-center gap-2 min-w-0">
-                                <span className="font-medium text-sm text-foreground truncate">
-                                  {p.name}
+                              <div className="flex flex-col gap-0.5 min-w-0">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <span className="font-medium text-sm text-foreground truncate">
+                                    {p.name}
+                                  </span>
+                                </div>
+
+                                <span className="text-xs text-muted-foreground truncate">
+                                  {p.shortDescription || p.description}
                                 </span>
                               </div>
-
-                              <span className="text-xs text-muted-foreground truncate">
-                                {p.shortDescription || p.description}
-                              </span>
                             </div>
-                          </div>
-                        </TableCell>
+                          </TableCell>
 
-                        <TableCell className="text-muted-foreground w-20 truncate">
-                          {p.categoryName || "-"}
-                        </TableCell>
-                        <TableCell className="w-15">
-                          {renderStatusBadge(p.status)}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground w-20 truncate">
-                          {p.markets?.length ? p.markets.join(", ") : "–"}
-                        </TableCell>
-                        <TableCell className="text-right w-10">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger className="hover:bg-primary/40 p-2 rounded cursor-pointer focus-visible:ring-0 focus-visible:outline-0 data-[active=true]:bg-accent/80">
-                              <MoreVertical className="w-4 h-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent side="left" align="start">
-                              <DropdownMenuLabel className="text-xs text-muted-foreground p-1">
-                                Actions
-                              </DropdownMenuLabel>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                className="flex items-center gap-1.5 group cursor-pointer"
-                                asChild
+                          <TableCell className="text-muted-foreground w-20 truncate">
+                            {p.categoryName || "-"}
+                          </TableCell>
+                          <TableCell className="w-15">
+                            {showStatus(p.status)}
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground w-20 truncate">
+                            {p.markets?.length ? p.markets.join(", ") : "–"}
+                          </TableCell>
+                          <TableCell className="text-right w-10">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger className="hover:bg-primary/40 p-2 rounded cursor-pointer focus-visible:ring-0 focus-visible:outline-0 data-[active=true]:bg-accent/80">
+                                <MoreVertical className="w-4 h-4" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                side="left"
+                                align="start"
+                                className="w-40"
                               >
-                                <Link
-                                  href={`/${SECRET_ADMIN_PATH}/products/${p.id}`}
+                                <DropdownMenuLabel className="text-xs text-muted-foreground p-1">
+                                  Actions
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                  <RenderStatusBadge
+                                    status={p.status}
+                                    productId={p.id}
+                                    handleStatusChange={handleStatusChange}
+                                    label
+                                  />
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="flex items-center gap-1.5 group cursor-pointer"
+                                  asChild
                                 >
-                                  <Pencil className="w-4 h-4 group-hover:text-primary" />
-                                  <span className="group-hover:text-primary">
-                                    Edit
-                                  </span>
-                                </Link>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-red-500 group cursor-pointer w-full flex items-center gap-1.5 focus-visible:bg-red-500/30 focus-visible:text-red-600 hover:bg-red-500/40 dark:hover:bg-red-950"
-                                onClick={() => p.id && handleDelete(p.id)}
-                              >
-                                <Trash2 className="w-4 h-4 group-hover:text-red-500" />
-                                <span>Delete</span>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={5}>
-                        <div className="flex flex-col items-center gap-2 py-10">
-                          <Search className="w-10 h-10 text-muted-foreground/50" />
-                          <p className="text-muted-foreground">
-                            No products found
-                          </p>
-                          <p className="text-sm text-muted-foreground/70">
-                            Try adjusting filters or create your first product.
-                          </p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
+                                  <Link
+                                    href={`/${SECRET_ADMIN_PATH}/products/${p.id}`}
+                                  >
+                                    <Pencil className="w-4 h-4 group-hover:text-primary" />
+                                    <span className="group-hover:text-primary">
+                                      Edit
+                                    </span>
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-red-500 group cursor-pointer w-full flex items-center gap-1.5 focus-visible:bg-red-500/30 focus-visible:text-red-600 hover:text-red-600 hover:bg-red-500/40 dark:hover:bg-red-950"
+                                  onClick={() => p.id && handleDelete(p.id)}
+                                >
+                                  <Trash2 className="w-4 h-4 group-hover:text-red-500" />
+                                  <span>Delete</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    : !loading && (
+                        <TableRow>
+                          <TableCell colSpan={5}>
+                            <div className="flex flex-col items-center gap-2 py-10">
+                              <Search className="w-10 h-10 text-muted-foreground/50" />
+                              <p className="text-muted-foreground">
+                                No products found
+                              </p>
+                              <p className="text-sm text-muted-foreground/70">
+                                Try adjusting filters or create your first
+                                product.
+                              </p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
                 </TableBody>
               </Table>
             </div>
@@ -460,7 +532,7 @@ export default function ProductsPage() {
                         </div>
                       )}
                       <div className="absolute top-2 left-2">
-                        {renderStatusBadge(p.status)}
+                        {showStatus(p.status)}
                       </div>
                     </div>
                     <CardContent className="flex-1 p-3 flex flex-col gap-2">
@@ -511,6 +583,11 @@ export default function ProductsPage() {
                           : ""}
                       </span>
                       <div className="flex items-center gap-1">
+                        <RenderStatusBadge
+                          status={p.status}
+                          productId={p.id}
+                          handleStatusChange={handleStatusChange}
+                        />
                         <Button
                           asChild
                           variant="ghost"
@@ -555,3 +632,41 @@ export default function ProductsPage() {
     </div>
   );
 }
+
+// Update your renderStatusBadge to accept productId for clickable status
+const RenderStatusBadge = ({
+  status,
+  productId,
+  handleStatusChange,
+  label = false,
+}: {
+  status: ProductStatus;
+  productId?: string;
+  handleStatusChange?: (productId: string, newStatus: ProductStatus) => void;
+  label?: boolean;
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger className="flex rounded w-full items-center gap-1 px-2 hover:bg-accent py-1.5 hover:text-primary">
+      <ArrowDownUp className="w-4 h-4" />
+      {label && <span className="text-sm">Change Status</span>}
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="center" side="top" className="w-32">
+      <DropdownMenuLabel>Change Status</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      {["active", "inactive", "draft"].map((option) => (
+        <DropdownMenuItem
+          key={option}
+          onClick={() =>
+            productId &&
+            handleStatusChange?.(productId, option as ProductStatus)
+          }
+          className={`${
+            status === option ? "bg-accent font-medium" : ""
+          } cursor-pointer my-0.5 focus-visible:ring-0 outline-0`}
+        >
+          <span className="capitalize">{option}</span>
+        </DropdownMenuItem>
+      ))}
+    </DropdownMenuContent>
+  </DropdownMenu>
+);

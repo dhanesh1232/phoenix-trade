@@ -142,7 +142,9 @@ export default function CategoriesPage() {
             }
           }}
           mode={onEdit ? "edit" : "create"}
-          initialValues={onEdit ?? { name: "", slug: "", image: null }}
+          initialValues={
+            onEdit ?? { name: "", slug: "", image: null, description: "" }
+          }
           onSubmit={(values) => {
             handleCreateCategory(values);
           }}
@@ -175,10 +177,13 @@ export default function CategoriesPage() {
             <Table className="min-w-full text-sm">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="whitespace-nowrap">ID</TableHead>
                   <TableHead className="whitespace-nowrap">Image</TableHead>
                   <TableHead className="whitespace-nowrap">Name</TableHead>
+                  <TableHead className="whitespace-nowrap">
+                    Description
+                  </TableHead>
                   <TableHead className="whitespace-nowrap">Slug</TableHead>
+
                   <TableHead className="whitespace-nowrap">
                     Created At
                   </TableHead>
@@ -190,76 +195,74 @@ export default function CategoriesPage() {
 
               <TableBody>
                 {filteredCategories.length ? (
-                  filteredCategories.map(
-                    (category: CategoryFormValues, ind) => (
-                      <TableRow key={category._id} className="space-x-0">
-                        <TableCell className="text-muted-foreground">
-                          #{ind + 1}
-                        </TableCell>
+                  filteredCategories.map((category: CategoryFormValues) => (
+                    <TableRow key={category._id} className="space-x-0">
+                      <TableCell className="w-10 h-10">
+                        <Avatar className="w-10 h-10 rounded-md border border-primary">
+                          <AvatarImage
+                            src={category.image?.url || ""}
+                            alt={category.name}
+                            className="object-cover"
+                          />
+                          <AvatarFallback className="rounded-md bg-muted">
+                            <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                          </AvatarFallback>
+                        </Avatar>
+                      </TableCell>
 
-                        <TableCell className="w-10 h-10">
-                          <Avatar className="w-10 h-10 rounded-md border border-primary">
-                            <AvatarImage
-                              src={category.image?.url || ""}
-                              alt={category.name}
-                              className="object-cover"
-                            />
-                            <AvatarFallback className="rounded-md bg-muted">
-                              <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                            </AvatarFallback>
-                          </Avatar>
-                        </TableCell>
+                      <TableCell className="font-medium max-w-16 truncate">
+                        {category.name}
+                      </TableCell>
+                      <TableCell className="w-26 max-w-40 truncate">
+                        <span className="text-muted-foreground">
+                          {category.description}
+                        </span>
+                      </TableCell>
 
-                        <TableCell className="font-medium max-w-32 truncate">
-                          {category.name}
-                        </TableCell>
+                      <TableCell className="text-muted-foreground max-w-32">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <code className="bg-muted px-2 py-1 rounded text-xs truncate inline-block max-w-full">
+                              {category.slug}
+                            </code>
+                          </TooltipTrigger>
+                          <TooltipContent>{category.slug}</TooltipContent>
+                        </Tooltip>
+                      </TableCell>
 
-                        <TableCell className="text-muted-foreground max-w-32">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <code className="bg-muted px-2 py-1 rounded text-xs truncate inline-block max-w-full">
-                                {category.slug}
-                              </code>
-                            </TooltipTrigger>
-                            <TooltipContent>{category.slug}</TooltipContent>
-                          </Tooltip>
-                        </TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap">
+                        {category.createdAt
+                          ? new Date(category.createdAt).toLocaleDateString()
+                          : "-"}
+                      </TableCell>
 
-                        <TableCell className="text-muted-foreground whitespace-nowrap">
-                          {category.createdAt
-                            ? new Date(category.createdAt).toLocaleDateString()
-                            : "-"}
-                        </TableCell>
-
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              className="text-primary hover:bg-primary/10"
-                              onClick={() => {
-                                setOnEdit(category);
-                                setOpen(true);
-                              }}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              onClick={() =>
-                                category._id &&
-                                handleDeleteCategory(category._id)
-                              }
-                              className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  )
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            className="text-primary hover:bg-primary/10"
+                            onClick={() => {
+                              setOnEdit(category);
+                              setOpen(true);
+                            }}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() =>
+                              category._id && handleDeleteCategory(category._id)
+                            }
+                            className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6}>

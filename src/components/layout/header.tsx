@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 export default function Header() {
-  const { menuOpen, setMenuOpen } = useApp();
+  const { menuOpen, setMenuOpen, categories } = useApp();
   const [scrolled, setScrolled] = React.useState(false);
   const path = usePathname();
 
@@ -40,6 +40,7 @@ export default function Header() {
   if (path.startsWith("/phoenix-admin-panel-9753") || path === "/not-found") {
     return null;
   }
+  console.log(categories);
 
   return (
     <>
@@ -48,7 +49,7 @@ export default function Header() {
           path === "/"
             ? "fixed"
             : "sticky bg-background backdrop-blur supports-backdrop-filter:bg-background",
-          "left-0 right-0 top-0 z-50 w-full border-b transition-all duration-300",
+          "left-0 right-0 top-0 z-50 w-full transition-all duration-300",
           scrolled || menuOpen
             ? "bg-background backdrop-blur supports-backdrop-filter:bg-background"
             : "bg-transparent",
@@ -89,30 +90,36 @@ export default function Header() {
 
                         <NavigationMenuContent className="bg-background rounded-lg shadow-lg">
                           <ul className="w-72 py-2 space-y-1.5">
-                            {link.subPages.map((sub) => (
-                              <li key={sub.href}>
-                                <NavigationMenuLink
-                                  href={sub.href}
-                                  className={`group block px-4 py-2 text-sm ease-in-out duration-300 transition-colors ${
-                                    path === sub.href
-                                      ? "bg-primary text-primary-foreground"
-                                      : "hover:bg-primary/10 focus:bg-primary/10 hover:text-primary"
-                                  } `}
-                                >
-                                  <span className="flex items-center justify-between">
-                                    <span>{sub.label}</span>
+                            {categories?.map((sub) => {
+                              const href = `/products/${sub.slug}`;
 
-                                    <ChevronRight
-                                      className={`h-4 w-4 transition-all duration-300 ${
-                                        path === sub.href
-                                          ? "translate-x-0 opacity-100 text-primary-foreground animate-pulse"
-                                          : "opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 group-hover:text-primary"
-                                      } `}
-                                    />
-                                  </span>
-                                </NavigationMenuLink>
-                              </li>
-                            ))}
+                              return (
+                                <li key={sub._id}>
+                                  <NavigationMenuLink
+                                    href={href}
+                                    className={`group block px-4 py-2 text-sm ease-in-out duration-300 transition-colors ${
+                                      path === href
+                                        ? "bg-primary text-primary-foreground"
+                                        : "hover:bg-primary/10 focus:bg-primary/10 hover:text-primary"
+                                    } `}
+                                    aria-current="page"
+                                    aria-label={sub.name}
+                                  >
+                                    <span className="flex items-center justify-between">
+                                      <span>{sub.name}</span>
+
+                                      <ChevronRight
+                                        className={`h-4 w-4 transition-all duration-300 ${
+                                          path === href
+                                            ? "translate-x-0 opacity-100 text-primary-foreground animate-pulse"
+                                            : "opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 group-hover:text-primary"
+                                        } `}
+                                      />
+                                    </span>
+                                  </NavigationMenuLink>
+                                </li>
+                              );
+                            })}
                           </ul>
                         </NavigationMenuContent>
                       </>
@@ -165,6 +172,7 @@ function MobileDrawer({
   onClose: () => void;
 }) {
   const path = usePathname();
+  const { categories } = useApp();
   const [active, setActive] = React.useState<string | null>(null);
 
   const toggle = (href: string) => {
@@ -204,7 +212,7 @@ function MobileDrawer({
                         block rounded-md
                         px-3 py-2
                         text-base
-                        transition-colors
+                        transition-colors ease-in-out duration-300
                        ${
                          path === link.href
                            ? "bg-primary text-primary-foreground"
@@ -220,13 +228,7 @@ function MobileDrawer({
                       <button
                         type="button"
                         onClick={() => toggle(link.href)}
-                        className={`
-                          flex w-full items-center justify-between
-                          rounded-md
-                          px-3 py-2.5
-                          text-xs font-semibold uppercase tracking-widest
-                          transition-colors cursor-pointer
-                          
+                        className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-base capitalize tracking-widest transition-colors cursor-pointer
                           ${
                             path === link.href || path.startsWith(link.href)
                               ? "bg-primary text-primary-foreground"
@@ -254,26 +256,31 @@ function MobileDrawer({
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                           >
                             <div className="py-1 space-y-1 pl-0.5 border-l-[3px] border-emerald-500">
-                              {link.subPages.map((sub) => (
-                                <Link
-                                  key={sub.href}
-                                  href={sub.href}
-                                  onClick={onClose}
-                                  className={`
+                              {categories?.map((sub) => {
+                                const href = `/products/${sub.slug}`;
+
+                                return (
+                                  <Link
+                                    key={sub._id}
+                                    href={href}
+                                    onClick={onClose}
+                                    className={`
                                     block rounded-md
                                     px-3 py-1.5
                                     text-sm
-                                    transition-colors
+                                    font-semibold
+                                    transition-colors ease-in-out duration-300
                                     ${
-                                      path === sub.href
+                                      path === href
                                         ? "bg-primary/85 text-primary-foreground"
                                         : "hover:bg-primary/10 focus:bg-primary/10 hover:text-primary"
                                     }
                                   `}
-                                >
-                                  {sub.label}
-                                </Link>
-                              ))}
+                                  >
+                                    {sub.name}
+                                  </Link>
+                                );
+                              })}
                             </div>
                           </motion.div>
                         )}

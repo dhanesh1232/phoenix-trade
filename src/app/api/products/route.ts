@@ -4,12 +4,7 @@ import { z } from "zod";
 import dbConnect from "@/lib/connection";
 import { ErrorHandles, SuccessHandles } from "@/lib/response";
 import { Product } from "@/models/product";
-
-const querySchema = z.object({
-  search: z.string().optional(),
-  category: z.string().optional(),
-  status: z.enum(["active", "draft", "inactive"]).optional(),
-});
+import { productApiSchema, querySchema } from "@/lib/product-schema";
 
 export async function GET(req: Request) {
   await dbConnect();
@@ -41,7 +36,7 @@ export async function GET(req: Request) {
       filter.category = category; // Mongoose will cast to ObjectId
     }
 
-    if (status && status !== "inactive") {
+    if (status) {
       filter.status = status;
     }
 
@@ -68,6 +63,7 @@ export async function GET(req: Request) {
       status: doc.status,
       images: doc.images,
       seo: doc.seo,
+      detailPage: doc.detailPage,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     }));
@@ -79,63 +75,6 @@ export async function GET(req: Request) {
     return ErrorHandles.InternalServer(e.message);
   }
 }
-
-// POST remains as you already have:
-const productApiSchema = z.object({
-  name: z.string().min(1),
-  slug: z.string().optional(),
-  category: z.string().min(1),
-  shortDescription: z.string().max(200),
-  description: z.any(),
-  specifications: z
-    .object({
-      origin: z.string().optional(),
-      processingType: z.string().optional(),
-      shelfLife: z.string().optional(),
-      certifications: z.array(z.string()).optional().default([]),
-      applications: z.array(z.string()).optional().default([]),
-    })
-    .optional()
-    .default(() => ({ certifications: [], applications: [] })),
-  availability: z.enum(["enquiry", "in_stock", "preorder"]),
-  markets: z
-    .array(z.enum(["EU", "GCC", "US", "ASEAN"]))
-    .optional()
-    .default([]),
-  tags: z.array(z.string()).optional().default([]),
-  status: z.enum(["active", "draft", "inactive"]).default("active"),
-  seo: z
-    .object({
-      metaTitle: z.string().optional(),
-      metaDescription: z.string().optional(),
-    })
-    .optional()
-    .default({}),
-  images: z
-    .object({
-      featured: z
-        .object({
-          id: z.string(),
-          url: z.string().url(),
-          fileName: z.string().optional(),
-          name: z.string().optional(),
-        })
-        .optional(),
-      gallery: z
-        .array(
-          z.object({
-            id: z.string(),
-            url: z.string().url(),
-            fileName: z.string().optional(),
-            name: z.string().optional(),
-          })
-        )
-        .optional()
-        .default([]),
-    })
-    .optional()
-    .default({ gallery: [] }),
-});
 
 export async function POST(req: Request) {
   try {
@@ -166,9 +105,10 @@ export async function POST(req: Request) {
       availability: data.availability,
       markets: data.markets,
       tags: data.tags,
-      status: data.status === "inactive" ? "draft" : data.status,
+      status: data.status,
       images: data.images,
       seo: data.seo,
+      detailPage: data.detailPage,
     });
 
     return NextResponse.json(
@@ -179,6 +119,8 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (err: unknown) {
+    console.error("POST /api/products error:", err);
+
     if (err instanceof z.ZodError) {
       return NextResponse.json(
         { message: "Invalid product data", errors: err.message },

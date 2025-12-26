@@ -32,6 +32,7 @@ import {
   Pen,
   MoveLeft,
   RefreshCcw,
+  Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ImageModal } from "@/components/pages/admin/layout/image-modal";
@@ -39,6 +40,11 @@ import MultiWords from "@/components/pages/admin/pages/multi-words";
 import { useApp } from "@/context/handler";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TextEditor } from "@/components/tiptap-texteditor/tiptap-templates/simple/richtext-editor";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // ========================
 // Zod schema & types
@@ -48,7 +54,7 @@ const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   slug: z.string().optional(),
   category: z.string().min(1, "Category is required"),
-  shortDescription: z.string().max(200, "Max 200 characters"),
+  shortDescription: z.string().max(400, "Max 400 characters"),
   description: z.any(),
   specifications: z.object({
     origin: z.string().optional(),
@@ -67,6 +73,7 @@ const productSchema = z.object({
       metaDescription: z.string().optional(),
     })
     .optional(),
+  detailPage: z.boolean(),
 });
 
 type Status = z.infer<typeof productSchema>["status"];
@@ -125,6 +132,7 @@ function mapInitialToFormValues(
     tags: initial.tags || [],
     status,
     seo: initial.seo || { metaTitle: "", metaDescription: "" },
+    detailPage: initial.detailPage || false,
   };
 }
 
@@ -174,6 +182,7 @@ export function AddProductPage({
       tags: [],
       status: "active",
       seo: { metaTitle: "", metaDescription: "" },
+      detailPage: false,
     },
   });
 
@@ -193,6 +202,7 @@ export function AddProductPage({
   // SEO touched flags
   const [metaTitleTouched, setMetaTitleTouched] = useState(false);
   const [metaDescriptionTouched, setMetaDescriptionTouched] = useState(false);
+  const [touchSlug, setTouchSlug] = useState(false);
   const watchedFormValues = watch();
   const [isChanged, setIsChanged] = useState(false);
 
@@ -269,6 +279,13 @@ export function AddProductPage({
         shouldDirty: false,
       });
     }
+    if (!touchSlug) {
+      const autoSlug = nameValue?.trim() || "";
+      setValue("slug", autoSlug.toLowerCase().replace(/\s+/g, "-"), {
+        shouldValidate: false,
+        shouldDirty: false,
+      });
+    }
   }, [
     nameValue,
     shortDescValue,
@@ -276,6 +293,7 @@ export function AddProductPage({
     metaDescriptionTouched,
     setValue,
     initialProduct,
+    touchSlug,
   ]);
 
   // Toggle helpers
@@ -373,6 +391,7 @@ export function AddProductPage({
     // also clear SEO touched so auto-fill can work again if needed
     setMetaTitleTouched(false);
     setMetaDescriptionTouched(false);
+    setTouchSlug(false);
 
     toast.success("Changes reverted to last loaded product");
   };
@@ -420,7 +439,7 @@ export function AddProductPage({
                 variant="outline"
                 onClick={handleReload}
                 disabled={isSubmitting || !isChanged}
-                className="gap-1 cursor-pointer gap-1"
+                className="gap-1 cursor-pointer"
               >
                 <RefreshCcw className="w-4 h-4 hidden sm:inline-block" />
                 Reload
@@ -471,11 +490,26 @@ export function AddProductPage({
         >
           {/* Basic Information */}
           <Card className="p-4 gap-2 rounded-md">
-            <CardHeader className="px-0">
+            <CardHeader className="px-0 flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Eye className="w-5 h-5" />
                 Basic Information
               </CardTitle>
+              <div className="space-x-1 flex items-center">
+                <Switch
+                  checked={form.watch("detailPage")}
+                  onCheckedChange={(checked) => setValue("detailPage", checked)}
+                />
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="text-muted-foreground w-4 h-4" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    When enabled, this product will have a dedicated detail page
+                    that customers can visit for more information.
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </CardHeader>
             <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-0">
               <div className="space-y-2">
@@ -492,6 +526,18 @@ export function AddProductPage({
                       {errors.name.message}
                     </p>
                   )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="slug">Slug</Label>
+                  <Input
+                    id="slug"
+                    {...form.register("slug")}
+                    onChange={(e) => {
+                      setTouchSlug(true);
+                      setValue("slug", e.target.value);
+                    }}
+                    placeholder="e.g: fresh-tomatoes"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -519,14 +565,17 @@ export function AddProductPage({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="shortDescription">Short Description</Label>
+                  <Label htmlFor="shortDescription">Short Description *</Label>
                   <Textarea
                     id="shortDescription"
                     {...form.register("shortDescription")}
                     rows={3}
-                    className={cn({
-                      "ring-2 ring-destructive": errors.shortDescription,
-                    })}
+                    className={cn(
+                      {
+                        "ring-2 ring-destructive": errors.shortDescription,
+                      },
+                      "max-h-25 min-h-20 overflow-y-auto resize-none"
+                    )}
                   />
                 </div>
               </div>
@@ -627,7 +676,7 @@ export function AddProductPage({
             </CardHeader>
             <CardContent className="space-y-2 px-0">
               <div className="space-y-2">
-                <Label htmlFor="description">Description *</Label>
+                <Label htmlFor="description">Description</Label>
                 <TextEditor
                   content={form.watch("description")}
                   onChange={(e) => {
@@ -784,26 +833,27 @@ export function AddProductPage({
                 <div className="flex items-center gap-3">
                   <div className="space-y-1">
                     <Label className="text-sm font-medium">Status</Label>
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        checked={form.watch("status") === "active"}
-                        onCheckedChange={(checked) =>
-                          setValue("status", checked ? "active" : "draft")
-                        }
-                      />
-                      <span
-                        className={cn(
-                          "text-xs font-medium",
-                          form.watch("status") === "active"
-                            ? "text-emerald-600"
-                            : "text-muted-foreground"
-                        )}
-                      >
-                        {form.watch("status") === "active"
-                          ? "Published"
-                          : "Draft"}
-                      </span>
-                    </div>
+                    <Select
+                      value={form.watch("status")}
+                      onValueChange={(v: ProductStatus) =>
+                        setValue("status", v)
+                      }
+                    >
+                      <SelectTrigger className="capitalize w-40">
+                        <SelectValue placeholder="Change Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {["active", "inactive", "draft"].map((option, i) => (
+                          <SelectItem
+                            value={option}
+                            key={option + i.toString()}
+                            className="capitalize"
+                          >
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>

@@ -12,8 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Plus, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import { ImageModal } from "@/components/pages/admin/layout/image-modal";
+import { Textarea } from "@/components/ui/textarea";
 
 export function CategoryDialog({
   open,
@@ -27,15 +28,19 @@ export function CategoryDialog({
   const [slug, setSlug] = React.useState<string>();
   const [image, setImage] = React.useState<ImageFormat | null>();
   const [imageModal, setImageModal] = React.useState<boolean>(false);
+  const [description, setDescription] = React.useState<string>();
+
   React.useEffect(() => {
     if (initialValues) {
       setName(initialValues.name);
       setSlug(initialValues.slug);
       setImage(initialValues.image || null);
+      setDescription(initialValues.description);
     } else {
       setName("");
       setSlug("");
       setImage(null);
+      setDescription("");
     }
   }, [initialValues]);
 
@@ -56,6 +61,7 @@ export function CategoryDialog({
     setName("");
     setSlug("");
     setImage(null);
+    setDescription("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -67,6 +73,7 @@ export function CategoryDialog({
       name: name.trim(),
       slug: slug.trim(),
       image,
+      description,
     };
     if (initialValues?._id) {
       (data as any)._id = initialValues._id;
@@ -79,12 +86,14 @@ export function CategoryDialog({
   const hasAllRequired =
     (name?.trim().length ?? 0) > 0 &&
     (slug?.trim().length ?? 0) > 0 &&
+    (description?.trim().length ?? 0) > 0 &&
     (mode === "create" ? !!image : true); // require image only on create if you want
 
   const isSameAsInitial =
     !!initialValues &&
     name?.trim() === (initialValues.name ?? "").trim() &&
     slug?.trim() === (initialValues.slug ?? "").trim() &&
+    description?.trim() === (initialValues.description ?? "").trim() &&
     (initialValues.image?.url ?? null) === (image?.url ?? null);
 
   const isSubmitDisabled =
@@ -114,7 +123,7 @@ export function CategoryDialog({
             <div className="space-y-2">
               <Label>Category Image</Label>
               {image ? (
-                <div className="flex items-center gap-4">
+                <div className="flex relative group items-center gap-4">
                   <Avatar className="w-full max-h-40 min-h-32 rounded-lg">
                     <AvatarImage
                       src={image.url}
@@ -123,11 +132,14 @@ export function CategoryDialog({
                     />
                   </Avatar>
                   <Button
+                    className="absolute group-hover:opacity-100 opacity-0 rounded-full right-2 top-2 z-10"
                     type="button"
-                    variant="outline"
+                    variant="outline-destructive"
+                    size="icon-xs"
+                    aria-label="Remove image"
                     onClick={() => setImage(null)}
                   >
-                    Remove
+                    <Trash2 size={16} />
                   </Button>
                 </div>
               ) : (
@@ -155,6 +167,19 @@ export function CategoryDialog({
                 placeholder="e.g., Fresh Produce"
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="category-description">
+                Description <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                id="category-description"
+                placeholder="e.g., Locally sourced organic fruits and vegetables"
+                className="font-mono text-sm"
+                rows={3}
               />
             </div>
 

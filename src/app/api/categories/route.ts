@@ -41,7 +41,7 @@ export async function GET() {
 export async function PUT(req: Request) {
   await dbConnect();
   try {
-    const { _id, name, image, slug } = await req.json();
+    const { _id, name, image, slug, description } = await req.json();
     console.log(_id, name, image, slug);
     const category = await Category.findById(_id);
     if (!category) {
@@ -50,6 +50,7 @@ export async function PUT(req: Request) {
     category.name = name;
     category.image = image;
     category.slug = slug;
+    category.description = description;
     await category.save();
 
     return SuccessHandles.Ok("Category updated successfully", category);

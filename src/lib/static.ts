@@ -4,20 +4,7 @@ export const navLinks = [
   {
     href: "/products",
     label: "Products",
-    subPages: [
-      {
-        href: "/products/fresh-agriculture-produce",
-        label: "Fresh Agriculture Produce",
-      },
-      {
-        href: "/products/marine-products",
-        label: "Marine Products",
-      },
-      {
-        href: "/products/dried-value-added-products",
-        label: "Dried & Value-Added Products",
-      },
-    ],
+    subPages: true,
   },
   { href: "/why-choose-us", label: "Why Choose Us" },
   { href: "/contact", label: "Contact" },
@@ -30,15 +17,16 @@ export const adminLinks = [
     icon: "dashboard",
   },
   {
-    title: "Products",
-    url: "/products",
-    icon: "package",
-  },
-  {
     title: "Category",
     url: "/categories",
     icon: "collection",
   },
+  {
+    title: "Products",
+    url: "/products",
+    icon: "package",
+  },
+
   // {
   //   title: "Content",
   //   url: "/content",
