@@ -4,6 +4,17 @@ import * as React from "react";
 
 const AppContext = React.createContext<AppContextType | undefined>(undefined);
 
+const defaultForm: ContactForm = {
+  name: "",
+  phone: "",
+  email: "",
+  product: "",
+  quantity: "",
+  country: "",
+  packaging: "",
+  timeline: "",
+  message: "",
+};
 export function AppProvider({ children }: { children: React.ReactNode }) {
   /* UI STATE */
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -12,6 +23,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   /* DATA */
   const [categories, setCategories] = React.useState();
+  const [formData, setFormData] = React.useState<ContactForm>(defaultForm);
+  const [loading, setLoading] = React.useState(false);
+  const [submitted, setSubmitted] = React.useState(false);
+
   const fetchCategories = React.useCallback(async () => {
     try {
       const res = await fetch("/api/categories");
@@ -25,6 +40,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
+
   return (
     <AppContext.Provider
       value={{
@@ -32,6 +48,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setMenuOpen,
         HeroPreview: heroPreview,
         categories,
+        defaultForm,
+        form: formData,
+        setForm: setFormData,
+        loading,
+        setLoading,
+        submitted,
+        setSubmitted,
       }}
     >
       {children}

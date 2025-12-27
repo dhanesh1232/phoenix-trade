@@ -4,7 +4,26 @@ declare global {
     setMenuOpen: (open: boolean) => void;
     HeroPreview?: HeroPreviewProps;
     categories?: Record<string, string>[];
+    defaultForm?: ContactForm;
+    form: ContactForm;
+    setForm?: (value: ContactForm) => void;
+    loading?: boolean;
+    setLoading?: (value: boolean) => void;
+    submitted?: boolean;
+    setSubmitted?: (value: boolean) => void;
   }
+
+  type ContactForm = {
+    name: string;
+    phone: string;
+    email: string;
+    product: string;
+    quantity: string;
+    country: string;
+    packaging: string;
+    timeline: string;
+    message: string;
+  };
   // Types
   type HeroPreviewProps =
     | "gif"

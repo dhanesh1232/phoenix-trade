@@ -135,12 +135,12 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="w-full mx-auto space-y-6 px-2 md:px-4 py-3">
+    <div className="w-full mx-auto space-y-4 px-2 md:px-4 py-3">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-4">
-            <div className="h-8 w-8 lg:w-10 lg:h-10 rounded bg-linear-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg">
+            <div className="h-8 w-8 lg:w-10 lg:h-10 rounded bg-linear-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
               <Package className="h-6 w-6 text-white" />
             </div>
             <div>
@@ -197,7 +197,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Products"
           value={summary?.global.totalProducts || 0}
@@ -525,7 +525,7 @@ function StatCard({
   loading = false,
 }: StatCardProps) {
   return (
-    <Card className="group rounded border p-4 gap-0 transition-all duration-300 hover:-translate-y-0.5 bg-linear-to-br from-background to-muted/30">
+    <Card className="group rounded border p-4 gap-0 transition-all duration-300 bg-linear-to-br from-background to-muted/30">
       <CardContent className="p-0 space-y-2 px-0">
         {loading ? (
           <div className="space-y-4">

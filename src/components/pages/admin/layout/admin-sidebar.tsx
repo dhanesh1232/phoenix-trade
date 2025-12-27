@@ -48,7 +48,7 @@ export function AppSidebar({ ...props }) {
   const isActive = getActiveMatcher(path);
 
   return (
-    <Sidebar {...props} variant="sidebar" collapsible="icon">
+    <Sidebar {...props} variant="sidebar" collapsible="icon" className="z-20">
       <SidebarHeader className="border-b border-border">
         <NavHeader />
       </SidebarHeader>

@@ -26,7 +26,11 @@ export const adminLinks = [
     url: "/products",
     icon: "package",
   },
-
+  {
+    title: "Enquiries",
+    url: "/enquiries",
+    icon: "message",
+  },
   // {
   //   title: "Content",
   //   url: "/content",

@@ -22,7 +22,10 @@ export const CTASection = () => {
           <ButtonSweep href="/contact">Contact Us</ButtonSweep>
 
           {/* WHATSAPP BUTTON */}
-          <ButtonSweep href="https://wa.me/917382675969" target="_blank">
+          <ButtonSweep
+            href="https://wa.me/917382675969?text=Hi, I'm interested in your export services and would like to discuss my requirements."
+            target="_blank"
+          >
             <FaWhatsapp className="inline-block text-xl" />
             WhatsApp
           </ButtonSweep>

@@ -1,6 +1,6 @@
 "use client";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { AppSidebar } from "./admin-sidebar";
 import { AppHeader } from "./admin-header";
 

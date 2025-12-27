@@ -147,9 +147,12 @@ export default function Header() {
   );
 }
 
-function LogoBlock() {
+export function LogoBlock() {
   return (
-    <Link href="/" className="flex items-center gap-2">
+    <Link
+      href="/"
+      className="flex items-center gap-2 focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-ring"
+    >
       <Image
         src="/logo.png"
         alt="Phoenix International Trading"
@@ -157,9 +160,14 @@ function LogoBlock() {
         height={40}
         priority
       />
-      <span className="-mb-1 -ml-2 text-sm font-bold uppercase tracking-[0.22em]">
-        Pho<span className="text-primary">e</span>nix
-      </span>
+      <div className="">
+        <span className="-mb-1 -ml-2 text-sm font-bold uppercase tracking-[0.22em]">
+          Pho<span className="text-primary">e</span>nix
+        </span>
+        <p className="text-[10px] uppercase -ml-2 tracking-[0.28em] text-gray-500">
+          Trading & Exports
+        </p>
+      </div>
     </Link>
   );
 }

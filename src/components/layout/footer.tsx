@@ -1,6 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  FaMapMarkerAlt,
+  FaEnvelope,
+  FaWhatsapp,
+  FaClock,
+} from "react-icons/fa";
+import { LogoBlock } from "./header";
+import { useApp } from "@/context/handler";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -24,6 +32,51 @@ const productLinks = [
   },
 ];
 
+const contactDetails = [
+  {
+    label: "Location",
+    value: "Kakinada, Andhra Pradesh, India",
+    icon: FaMapMarkerAlt,
+  },
+  {
+    label: "Email",
+    value: "info@phoenixinternationaltrading.com",
+    icon: FaEnvelope,
+  },
+  {
+    label: "WhatsApp",
+    value: "+91 7382675969",
+    icon: FaWhatsapp,
+  },
+  {
+    label: "Business Hours",
+    value: "Monday – Saturday, 9:00 AM – 7:00 PM (IST)",
+    icon: FaClock,
+  },
+];
+
+const CategoryLinks = () => {
+  const { categories } = useApp();
+  return (
+    <ul className="space-y-2.5 text-sm">
+      {categories?.map((link) => {
+        const href = `/products/${link.slug}`;
+        return (
+          <li key={link._id}>
+            <Link
+              href={href}
+              className="inline-flex items-center gap-2 text-gray-400 hover:text-emerald-300 transition-colors"
+            >
+              <span className="h-px w-4 bg-emerald-500/40 group-hover:w-6 transition-all duration-200" />
+              <span>{link.name}</span>
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
 export const Footer = () => {
   const path = usePathname();
 
@@ -32,38 +85,35 @@ export const Footer = () => {
   }
 
   return (
-    <footer className="bg-black text-gray-300 border-t border-gray-800">
-      {/* Main Footer */}
-      <div className="mx-auto max-w-7xl px-4 py-20 grid gap-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <footer className="bg-[#050608] text-gray-300 border-t border-white/5">
+      {/* Main */}
+      <div className="mx-auto max-w-7xl px-4 lg:px-6 py-10 lg:py-14 grid gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {/* Brand */}
-        <div>
-          <h3 className="text-lg font-semibold text-white font-['Playfair_Display']">
-            Phoenix International Trading
-          </h3>
-
-          <div className="pl-4 border-l-[3px] border-emerald-500 mt-4">
-            <p className="text-sm leading-relaxed opacity-80">
-              Trusted Produce for Every Market. Supplying agricultural, marine,
-              and value-added food exports with reliability and global
-              standards.
-            </p>
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-3">
+            <LogoBlock />
           </div>
+
+          <p className="text-sm leading-relaxed text-gray-400 max-w-xs">
+            Curated agricultural, marine, and value‑added food products, crafted
+            for discerning global buyers.
+          </p>
         </div>
 
         {/* Quick Links */}
-        <div>
-          <h4 className="mb-4 text-sm font-medium uppercase tracking-widest text-white">
+        <div className="space-y-4">
+          <h4 className="text-xs font-medium uppercase tracking-[0.28em] text-gray-400">
             Quick Links
           </h4>
-
-          <ul className="space-y-3 text-sm pl-4 border-l-[3px] border-emerald-500">
+          <ul className="space-y-2.5 text-sm">
             {quickLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="hover:text-emerald-400 transition-colors"
+                  className="inline-flex items-center gap-2 text-gray-400 hover:text-emerald-300 transition-colors"
                 >
-                  {link.label}
+                  <span className="h-px w-4 bg-emerald-500/40 group-hover:w-6 transition-all duration-200" />
+                  <span>{link.label}</span>
                 </Link>
               </li>
             ))}
@@ -71,63 +121,79 @@ export const Footer = () => {
         </div>
 
         {/* Products */}
-        <div>
-          <h4 className="mb-4 text-sm font-medium uppercase tracking-widest text-white">
-            Products
+        <div className="space-y-4">
+          <h4 className="text-xs font-medium uppercase tracking-[0.28em] text-gray-400">
+            Product Range
           </h4>
-          <ul className="space-y-3 text-sm pl-4 border-l-[3px] border-emerald-500">
-            {productLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="hover:text-emerald-400 transition-colors"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <CategoryLinks />
         </div>
 
         {/* Contact */}
-        <div>
-          <h4 className="mb-4 text-sm font-medium uppercase tracking-widest text-white">
+        <div className="space-y-4">
+          <h4 className="text-xs font-medium uppercase tracking-[0.28em] text-gray-400">
             Contact
           </h4>
+          <ul className="space-y-3 text-sm">
+            {contactDetails.map((item) => {
+              const Icon = item.icon;
+              const isEmail = item.label === "Email";
+              const isWhatsApp = item.label === "WhatsApp";
 
-          <ul className="space-y-3 text-sm opacity-90 pl-4 border-l-[3px] border-emerald-500">
-            <li>Kakinada, Andhra Pradesh, India</li>
+              const content = (
+                <>
+                  <Icon className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <div className="space-y-0.5 -mt-1.5">
+                    <span className="text-[11px] uppercase tracking-[0.24em] text-gray-500">
+                      {item.label}
+                    </span>
+                    <span className="block text-gray-300 hover:text-accent">
+                      {item.value}
+                    </span>
+                  </div>
+                </>
+              );
 
-            <li>
-              <a
-                href="mailto:info@phoenixinternationaltrading.com"
-                className="hover:text-emerald-400 transition-colors"
-              >
-                info@phoenixinternationaltrading.com
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="https://wa.me/91XXXXXXXXXX"
-                target="_blank"
-                className="hover:text-emerald-400 transition-colors"
-              >
-                WhatsApp: +91 XXXXX XXXXX
-              </a>
-            </li>
-
-            <li className="text-gray-500">
-              Mon – Sat: 9:00 AM – 7:00 PM (IST)
-            </li>
+              return (
+                <li key={item.label}>
+                  {isEmail ? (
+                    <Link
+                      href={`mailto:${item.value}`}
+                      className="group inline-flex items-start gap-3 hover:text-emerald-300 transition-colors"
+                    >
+                      {content}
+                    </Link>
+                  ) : isWhatsApp ? (
+                    <Link
+                      href="https://wa.me/917382675969"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group inline-flex items-start gap-3 hover:text-emerald-300 transition-colors"
+                    >
+                      {content}
+                    </Link>
+                  ) : (
+                    <div className="inline-flex items-start gap-3">
+                      {content}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800 py-6 text-center text-xs text-gray-500">
-        © {new Date().getFullYear()} Phoenix International Trading. All rights
-        reserved.
+      <div className="border-t border-white/5">
+        <div className="mx-auto max-w-7xl px-4 lg:px-6 py-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between text-[11px] tracking-[0.22em] uppercase text-gray-500">
+          <p>
+            © {new Date().getFullYear()} Phoenix International Trading. All
+            rights reserved.
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <span>Global Sourcing. Refined Delivery.</span>
+          </div>
+        </div>
       </div>
     </footer>
   );

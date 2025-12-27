@@ -4,6 +4,7 @@ import {
   Info,
   Layers2,
   LayoutDashboard,
+  MessageCircle,
   Notebook,
   Package,
   Trash2,
@@ -24,4 +25,5 @@ export const Icons = {
   trash2: Trash2,
   info: Info,
   chevronDown: ChevronDown,
+  message: MessageCircle,
 } as const;

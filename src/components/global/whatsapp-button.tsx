@@ -32,7 +32,7 @@ export const WhatsAppFloatingButton = () => {
             cx="50"
             cy="50"
             r="45"
-            className="stroke-emerald-500"
+            className="stroke-accent"
             strokeWidth="5"
             fill="none"
             strokeDasharray="283"
@@ -49,7 +49,7 @@ export const WhatsAppFloatingButton = () => {
         <span
           className="z-10
             w-10 md:w-14 h-10 md:h-14 rounded-full flex items-center justify-center
-            bg-emerald-600 text-white shadow-lg 
+            bg-primary text-primary-foreground shadow-lg 
             hover:scale-110 transition-transform hover:bg-[#34d399] hover:text-[#064e3b]
           "
         >
