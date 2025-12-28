@@ -1,0 +1,25 @@
+# www.example.com/robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.phoenixexportshub.com/sitemap.xml
+
+# Allow search engines
+User-agent: Googlebot
+Allow: /
+Disallow: /private/
+Disallow: /admin/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /private/
+Disallow: /admin/
+
+User-agent: *
+Disallow: /private/
+Disallow: /admin/
+Disallow: /*?*search*
+
+# Crawl-delay for politeness
+Crawl-delay: 1

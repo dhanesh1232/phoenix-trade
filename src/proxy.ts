@@ -11,6 +11,14 @@ export async function proxy(req: NextRequest) {
   const isAdmin = pathname.startsWith(`/${SECRET_ADMIN_PATH}`);
   const isAuthPage = pathname.startsWith(`/${SECRET_ADMIN_PATH}/auth`);
 
+  // Canonical URL handling
+  if (url.pathname.startsWith("/products")) {
+    const canonicalUrl = `https://www.phoenixexportshub.com${url.pathname}`;
+    const response = NextResponse.next();
+    response.headers.set("Link", `<${canonicalUrl}>; rel="canonical"`);
+    return response;
+  }
+
   // 1️⃣ Public pages → always allowed
   if (!isAdmin) {
     return NextResponse.next();
@@ -37,5 +45,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|static|favicon.ico|api).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|api).*)"],
 };

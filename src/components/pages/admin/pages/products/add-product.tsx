@@ -207,6 +207,7 @@ export function AddProductPage({
   const [isChanged, setIsChanged] = useState(false);
 
   const markets = watch("markets") || [];
+  const applications = watch("specifications.applications") || [];
   const certifications = watch("specifications.certifications") || [];
   const nameValue = watch("name");
   const shortDescValue = watch("shortDescription");
@@ -758,7 +759,7 @@ export function AddProductPage({
                 <CardTitle>Specifications</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 px-0">
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Input
                     {...form.register("specifications.origin")}
                     placeholder="Origin (e.g., Andhra Pradesh, India)"
@@ -767,9 +768,13 @@ export function AddProductPage({
                     {...form.register("specifications.processingType")}
                     placeholder="Processing Type"
                   />
+                  <Input
+                    {...form.register("specifications.shelfLife")}
+                    placeholder="Shelf Life"
+                  />
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label>Certifications</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {CERTIFICATIONS.map((cert) => (
@@ -783,7 +788,7 @@ export function AddProductPage({
                   </div>
                 </div>
 
-                {/* <div className="space-y-3">
+                <div className="space-y-3">
                   <Label>Applications</Label>
                   <MultiWords
                     defaultWords={applications}
@@ -792,7 +797,7 @@ export function AddProductPage({
                       setValue("specifications.applications", apps)
                     }
                   />
-                </div> */}
+                </div>
               </CardContent>
             </Card>
           </div>

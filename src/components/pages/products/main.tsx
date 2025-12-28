@@ -19,7 +19,7 @@ type Category = {
 
 export default function ProductsMainPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-full bg-background text-foreground">
       {/* Page Header */}
       <section className="py-20 md:py-24 bg-muted/60 border-b border-border">
         <div className="mx-auto max-w-5xl px-4 text-center">

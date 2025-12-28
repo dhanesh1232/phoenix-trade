@@ -1,13 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  EditorContent,
-  EditorContext,
-  ReactNodeViewRenderer,
-  useEditor,
-  NodeViewWrapper,
-} from "@tiptap/react";
+import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit";
@@ -97,8 +91,6 @@ export function TextEditor({ content, onChange }: RichTextEditorProps) {
       // handleKeyDown: (_view, event) => textEditorKeyHandle(event),
     },
     extensions: [
-      ResizableImage,
-      ImageWithResizePopup,
       StarterKit.configure({
         horizontalRule: false,
         link: {
@@ -122,16 +114,26 @@ export function TextEditor({ content, onChange }: RichTextEditorProps) {
       }),
     ],
     content,
-    onUpdate: ({ editor }) => {
+    onUpdate: ({ editor, transaction }) => {
+      if (!transaction.docChanged) return;
       const html = editor.getJSON();
       onChange?.(html);
     },
   });
 
   React.useEffect(() => {
-    if (editor && content) {
-      editor.commands.setContent(content, { emitUpdate: false }); // don't emit update event
-    }
+    if (!editor || !content) return;
+
+    const currentJson = editor.getJSON();
+    const isSameContent =
+      JSON.stringify(currentJson) === JSON.stringify(content);
+
+    if (isSameContent) return; // Prevent loop on identical content
+
+    // Preserve cursor position
+    const { from, to } = editor.state.selection;
+    editor.commands.setContent(content, { emitUpdate: false });
+    editor.commands.setTextSelection({ from, to });
   }, [content, editor]);
 
   React.useEffect(() => {
@@ -179,80 +181,3 @@ export function TextEditor({ content, onChange }: RichTextEditorProps) {
     </>
   );
 }
-
-export const ResizableImage = Image.extend({
-  addAttributes() {
-    return {
-      ...this.parent?.(),
-      width: {
-        default: "auto",
-        parseHTML: (element) => element.getAttribute("width") || "auto",
-        renderHTML: (attributes) => ({ width: attributes.width }),
-      },
-      height: {
-        default: "auto",
-        parseHTML: (element) => element.getAttribute("height") || "auto",
-        renderHTML: (attributes) => ({ height: attributes.height }),
-      },
-    };
-  },
-});
-
-export const ImageWithResizePopup = ResizableImage.extend({
-  addNodeView() {
-    return ReactNodeViewRenderer(({ node, updateAttributes }) => {
-      const { src, width, height } = node.attrs;
-      const [showPopup, setShowPopup] = React.useState(false);
-      const [w, setW] = React.useState(width || "");
-      const [h, setH] = React.useState(height || "");
-
-      const normalize = (value: string) => (value ? value : "auto");
-
-      return (
-        <NodeViewWrapper className="relative inline-block">
-          <img
-            src={src}
-            width={w}
-            height={h}
-            className="rounded cursor-pointer"
-            onClick={() => setShowPopup(!showPopup)}
-          />
-          {showPopup && (
-            <div className="absolute top-0 left-1/2 ml-2 p-2 bg-white border rounded shadow z-50 flex flex-col gap-2">
-              <label>
-                Width:
-                <input
-                  type="text"
-                  value={w}
-                  onChange={(e) => setW(e.target.value)}
-                  onBlur={() =>
-                    updateAttributes({
-                      width: normalize(w),
-                      height: normalize(h),
-                    })
-                  }
-                  className="border p-1 w-20"
-                />
-              </label>
-              <label>
-                Height:
-                <input
-                  type="text"
-                  value={h}
-                  onChange={(e) => setH(e.target.value)}
-                  onBlur={() =>
-                    updateAttributes({
-                      width: normalize(w),
-                      height: normalize(h),
-                    })
-                  }
-                  className="border p-1 w-20"
-                />
-              </label>
-            </div>
-          )}
-        </NodeViewWrapper>
-      );
-    });
-  },
-});

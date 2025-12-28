@@ -1,3 +1,4 @@
+import { WhatsAppCTA } from "@/components/global/whatsapp-cta";
 import { BananaFiberShowcase } from "@/components/pages/home/banana-fabric";
 import { CTASection } from "@/components/pages/home/cta-section";
 import { GlobalSupplySection } from "@/components/pages/home/global-supply";
@@ -18,6 +19,11 @@ export default function Page() {
       <WhyChooseSection />
       <div className="h-px bg-gray-200 max-w-7xl mx-auto" />
       <BananaFiberShowcase />
+      <WhatsAppCTA
+        variant="default"
+        phoneNumber="917382675969"
+        message="Hi, I'm interested in your export services and would like to discuss my requirements."
+      />
       <GlobalSupplySection />
       <CTASection />
     </div>

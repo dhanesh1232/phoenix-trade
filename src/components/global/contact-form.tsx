@@ -7,6 +7,13 @@ import { Input } from "../ui/input";
 import { StyledPhoneInput } from "../ui/phone-input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 export function EnquiryForm() {
   const router = useRouter();
@@ -134,14 +141,26 @@ export function EnquiryForm() {
           </div>
           <div className="space-y-1.5">
             <Label>Target Country *</Label>
-            <Input
-              required
-              type="text"
-              value={form?.country}
-              onChange={(e) => setForm?.({ ...form, country: e.target.value })}
-              className="w-full rounded-none"
-              placeholder="United States"
-            />
+            <Select
+              value={form.country}
+              onValueChange={(v) => setForm?.({ ...form, country: v })}
+            >
+              <SelectTrigger className="w-full rounded-none">
+                <SelectValue placeholder="Select destination country" />
+              </SelectTrigger>
+              <SelectContent className="w-full rounded-none">
+                <SelectItem value="USA">🇺🇸 USA</SelectItem>
+                <SelectItem value="UK">🇬🇧 UK</SelectItem>
+                <SelectItem value="UAE">🇦🇪 UAE</SelectItem>
+                <SelectItem value="Australia">🇦🇺 Australia</SelectItem>
+                <SelectItem value="Canada">🇨🇦 Canada</SelectItem>
+                <SelectItem value="Germany">🇩🇪 Germany</SelectItem>
+                <SelectItem value="Netherlands">🇳🇱 Netherlands</SelectItem>
+                <SelectItem value="Saudi Arabia">🇸🇦 Saudi Arabia</SelectItem>
+                <SelectItem value="Singapore">🇸🇬 Singapore</SelectItem>
+                <SelectItem value="Other">🌍 Other</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

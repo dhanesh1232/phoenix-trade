@@ -44,6 +44,42 @@ const nextConfig: NextConfig = {
     ],
     dangerouslyAllowSVG: true, // ✅ Needed for SVG images
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // ✅ (Optional but recommended)
+    minimumCacheTTL: 31536000, // 1 year
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+    ];
+  },
+
+  // Canonical URLs
+  async rewrites() {
+    return [
+      {
+        source: "/products/:path*",
+        destination: "/products/:path*",
+      },
+    ];
   },
 };
 

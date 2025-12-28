@@ -11,7 +11,38 @@ declare global {
     setLoading?: (value: boolean) => void;
     submitted?: boolean;
     setSubmitted?: (value: boolean) => void;
+    whatsappForm?: WhatsappForm;
+    setWhatsappForm?: (value: WhatsappForm) => void;
+    defaultWhatsappForm?: WhatsappForm;
   }
+
+  /* ================= TYPES ================= */
+
+  type Product = {
+    _id: string;
+    name: string;
+    shortDescription: string;
+    description?: any;
+    slug: string;
+    specifications?: {
+      origin?: string;
+      processingType?: string;
+      shelfLife?: string;
+      certifications?: string[];
+      applications?: string[];
+      moistureContent?: string;
+      packaging?: string;
+      grade?: string;
+    };
+    availability: "enquiry" | "in_stock" | "preorder";
+    markets: string[];
+    images: {
+      featured?: ImageFormat;
+      gallery: ImageFormat[];
+    };
+    category: any;
+    detailPage: boolean;
+  };
 
   type ContactForm = {
     name: string;
@@ -24,7 +55,17 @@ declare global {
     timeline: string;
     message: string;
   };
-  // Types
+
+  type WhatsappFormData = {
+    name: string;
+    category: string;
+    country: string;
+    quantity?: string;
+    message?: string;
+    email?: string;
+    phone?: string;
+  };
+
   type HeroPreviewProps =
     | "gif"
     | "image"

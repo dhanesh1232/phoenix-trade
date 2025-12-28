@@ -15,6 +15,13 @@ const defaultForm: ContactForm = {
   timeline: "",
   message: "",
 };
+
+const defaultWhatsappForm: WhatsappFormData = {
+  name: "",
+  category: "",
+  country: "",
+};
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   /* UI STATE */
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -24,6 +31,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   /* DATA */
   const [categories, setCategories] = React.useState();
   const [formData, setFormData] = React.useState<ContactForm>(defaultForm);
+  const [whatsappForm, setWhatsappForm] =
+    React.useState<WhatsappFormData>(defaultWhatsappForm);
   const [loading, setLoading] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
 
@@ -37,6 +46,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       console.log(e.message);
     }
   }, []);
+
   React.useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -55,6 +65,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setLoading,
         submitted,
         setSubmitted,
+        whatsappForm,
+        setWhatsappForm,
+        defaultWhatsappForm,
       }}
     >
       {children}

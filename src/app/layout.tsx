@@ -18,8 +18,20 @@ export const metadata: Metadata = {
   title: "Phoenix Export Company | Global Quality Exports & Trade Solutions",
   description:
     "Phoenix Export Company – trusted global exporter of premium products. Reliable trade solutions, worldwide logistics, and unmatched quality assurance. Partner with us for excellence.",
-  keywords:
+  keywords: [
     "export company, global trade, international exports, Phoenix Export, quality exports, worldwide logistics, trade solutions, export services",
+    "agricultural exports",
+    "basmati rice export",
+    "indian spices wholesale",
+    "nuts export india",
+    "food exports",
+  ],
+
+  authors: [{ name: "Phoenix Exports" }],
+
+  creator: "Phoenix Exports",
+  publisher: "Phoenix Exports",
+
   openGraph: {
     title: "Phoenix Export Company | Global Quality Exports",
     description:
@@ -39,10 +51,14 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Phoenix Export Company | Global Quality Exports",
+    title: {
+      default: "Phoenix Exports - Premium Agricultural Products",
+      template: "%s | Phoenix Exports",
+    },
     description:
       "Leading global exporter delivering premium products with reliable trade solutions and worldwide logistics.",
     images: ["/twitter-image.jpg"],
+    creator: "@phoenixexports",
   },
   robots: {
     index: true,
@@ -55,9 +71,16 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+
   alternates: {
     canonical: "https://phoenixexportshub.com",
   },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

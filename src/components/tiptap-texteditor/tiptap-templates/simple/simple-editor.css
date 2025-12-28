@@ -1,8 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 body {
   --tt-toolbar-height: 44px;
   --tt-theme-text: var(--tt-gray-light-900);
 }
+
 .dark body {
   --tt-theme-text: var(--tt-gray-dark-900);
 }
@@ -65,24 +67,31 @@ body,
   display: flex;
   flex-direction: column;
   flex: 1;
-  overflow-y: hidden; /* start hidden */
+  overflow-y: hidden;
+  /* start hidden */
   transition: all 0.3s ease;
 }
 
 .simple-editor-content.focused {
-  overflow-y: auto; /* show scrollbar when active */
+  overflow-y: auto;
+  /* show scrollbar when active */
 }
 
 .simple-editor-content .tiptap.ProseMirror.simple-editor {
   flex: 1;
-  padding: 0.5rem 0.5rem 1rem; /* default small padding */
+  padding: 0.5rem 0.5rem 1rem;
+  /* default small padding */
   transition: padding-bottom 0.3s ease;
 }
 
 .simple-editor-content.focused .tiptap.ProseMirror.simple-editor {
-  padding-bottom: 30vh; /* larger when focused */
+  padding-bottom: 30vh;
+  /* larger when focused */
 }
 
 .simple-editor-content.focused.content .tiptap.ProseMirror.simple-editor {
-  padding-bottom: 30vh; /* larger when focused */
-}/*# sourceMappingURL=simple-editor.css.map */
+  padding-bottom: 30vh;
+  /* larger when focused */
+}
+
+/*# sourceMappingURL=simple-editor.css.map */

@@ -9,6 +9,7 @@ import { WhatsAppFloatingV2 } from "../global/whatsapp-floating-v2";
 import { Toaster } from "../ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { BackToTop } from "../global/back-to-top";
+import { WhatsappDialogForm } from "../global/whatsapp-form";
 
 export default function Main({ children }: { children: ReactNode }) {
   return (
@@ -23,6 +24,7 @@ export default function Main({ children }: { children: ReactNode }) {
         <WhatsAppFloatingButton />
         {/* <WhatsAppFloatingV2 /> */}
         <BackToTop />
+        <WhatsappDialogForm />
       </AppProvider>
     </SessionProvider>
   );
