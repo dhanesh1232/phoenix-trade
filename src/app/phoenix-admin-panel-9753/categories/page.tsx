@@ -64,7 +64,7 @@ export default function CategoriesPage() {
   const handleCreateCategory = async (values: CategoryFormValues) => {
     try {
       setIsCreating(true);
-      console.log(values);
+      // console.log(values);
       const res = await fetch("/api/categories", {
         method: onEdit ? "PUT" : "POST",
         headers: {
@@ -79,7 +79,7 @@ export default function CategoriesPage() {
       }
 
       toast.success(data.message || "Category created successfully");
-      console.log(data.data);
+      // console.log(data.data);
 
       setCategories((prev) => {
         const exists = prev.some((cat) => cat._id === data.data._id);

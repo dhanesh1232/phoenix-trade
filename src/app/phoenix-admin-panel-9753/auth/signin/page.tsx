@@ -54,7 +54,7 @@ export default function SignInPage() {
         router.replace(`/${SECRET_ADMIN_PATH}`);
       }
     } catch (err: unknown) {
-      console.log(err);
+      // console.log(err);
       toast.error("Something went wrong");
     } finally {
       setIsLogin(false);

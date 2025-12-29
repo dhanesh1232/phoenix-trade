@@ -1,19 +1,18 @@
 // app/api/images/route.ts
-import ImageKit from "imagekit";
-import { ErrorHandles, SuccessHandles } from "@/lib/response";
 
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY!, // keep on server only
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT!,
-});
+import dbConnect from "@/lib/connection";
+import { imagekit } from "@/lib/image-kit";
+import { ErrorHandles, SuccessHandles } from "@/lib/response";
+import { Category } from "@/models/category";
+import { Product } from "@/models/product";
 
 export async function GET(req: Request) {
   try {
+    await dbConnect();
+
     const { searchParams } = new URL(req.url);
     const folder = searchParams.get("folder") || "phoenix";
     const search = searchParams.get("q") || "";
-    // console.log(folder, search);
 
     const params: any = {
       path: `/${folder}`,
@@ -21,30 +20,55 @@ export async function GET(req: Request) {
     };
 
     if (search) {
-      // simple name match; you can use advanced searchQuery as well
       params.searchQuery = `name ~ "${search}"`;
     }
 
     const files = await imagekit.listFiles(params);
 
-    const images = files
-      .map((f: any) => {
-        if (f.type !== "file") return null;
+    const images = await Promise.all(
+      files
+        .filter((f: any) => f.type === "file")
+        .map(async (f: any) => {
+          const fileId = f.fileId;
 
-        return {
-          id: f.fileId,
-          url: f.url,
-          thumbnail: f.thumbnail,
-          name: f.name,
-          fileName: f.name.split("_").shift()?.replace("-", " "),
-        };
-      })
-      .filter(Boolean); // remove nulls
+          // CATEGORY usage
+          const categoryCount = await Category.countDocuments({
+            "image.id": fileId,
+          });
 
-    return SuccessHandles.Ok("Images fetch successfully", { images });
+          // PRODUCT featured usage
+          const featuredCount = await Product.countDocuments({
+            "images.featured.id": fileId,
+          });
+
+          // PRODUCT gallery usage
+          const galleryCount = await Product.countDocuments({
+            "images.gallery.id": fileId,
+          });
+
+          const usageCount = categoryCount + featuredCount + galleryCount;
+
+          return {
+            id: fileId,
+            url: f.url,
+            thumbnail: f.thumbnail,
+            name: f.name,
+            fileName: f.name.split("_").shift()?.replace("-", " "),
+            used: usageCount > 0,
+            usageCount,
+            usagePoints: {
+              category: categoryCount,
+              productFeatured: featuredCount,
+              productGallery: galleryCount,
+            },
+          };
+        })
+    );
+
+    return SuccessHandles.Ok("Images fetched", { images });
   } catch (err: unknown) {
     const e = err as Error;
-    console.log(e.message);
+    console.error(e.message);
     return ErrorHandles.InternalServer(e.message);
   }
 }
@@ -76,6 +100,25 @@ export async function POST(req: Request) {
       fileName: uploaded.name.split("_").shift()?.replace("-", " "),
     });
   } catch (err) {
+    const e = err as Error;
+    console.log(e.message);
+    return ErrorHandles.InternalServer(e.message);
+  }
+}
+
+// DELETE single image
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const fileId = searchParams.get("fileId");
+    // console.log(fileId);
+    if (!fileId) {
+      return ErrorHandles.BadRequest("fileId is required");
+    }
+
+    await imagekit.deleteFile(fileId);
+    return SuccessHandles.Ok("Image deleted successfully");
+  } catch (err: unknown) {
     const e = err as Error;
     console.log(e.message);
     return ErrorHandles.InternalServer(e.message);

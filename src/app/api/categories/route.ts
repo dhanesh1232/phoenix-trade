@@ -6,7 +6,6 @@ export async function POST(req: Request) {
   await dbConnect();
   try {
     const { name, image, slug } = await req.json();
-    console.log(name, image, slug);
     const category = await Category.findOne({ slug });
 
     if (category) {
@@ -21,7 +20,7 @@ export async function POST(req: Request) {
     return SuccessHandles.Ok("Category created successfully", newCategory);
   } catch (err: unknown) {
     const e = err as Error;
-    console.log(e.message);
+    // console.log(e.message);
     return ErrorHandles.InternalServer(e.message);
   }
 }
@@ -33,7 +32,7 @@ export async function GET() {
     return SuccessHandles.Ok("Categories fetched successfully", { categories });
   } catch (err: unknown) {
     const e = err as Error;
-    console.log(e.message);
+    // console.log(e.message);
     return ErrorHandles.InternalServer(e.message);
   }
 }
@@ -42,7 +41,7 @@ export async function PUT(req: Request) {
   await dbConnect();
   try {
     const { _id, name, image, slug, description } = await req.json();
-    console.log(_id, name, image, slug);
+
     const category = await Category.findById(_id);
     if (!category) {
       return ErrorHandles.BadRequest("Category not found");
@@ -56,7 +55,7 @@ export async function PUT(req: Request) {
     return SuccessHandles.Ok("Category updated successfully", category);
   } catch (err: unknown) {
     const e = err as Error;
-    console.log(e.message);
+    // console.log(e.message);
     return ErrorHandles.InternalServer(e.message);
   }
 }

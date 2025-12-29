@@ -367,7 +367,7 @@ export function AddProductPage({
       router.push("/phoenix-admin-panel-9753/products");
     } catch (error: unknown) {
       const e = error as Error;
-      console.log(e.message);
+      // console.log(e.message);
       toast.error(e.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -681,7 +681,6 @@ export function AddProductPage({
                 <TextEditor
                   content={form.watch("description")}
                   onChange={(e) => {
-                    console.log(e);
                     setValue("description", e);
                   }}
                 />

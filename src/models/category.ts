@@ -42,5 +42,22 @@ const categorySchema = new mongoose.Schema({
   },
 });
 
+categorySchema.pre("findOneAndDelete", async function (next) {
+  const categoryId = this.getQuery()._id;
+
+  if (!categoryId) {
+    if (typeof next === "function") next();
+    return;
+  }
+  try {
+    // Delete all products with this category
+    await mongoose.model("Product").deleteMany({ category: categoryId });
+
+    if (typeof next === "function") next();
+  } catch (e: unknown) {
+    if (typeof next === "function") next(e as Error);
+  }
+});
+
 export const Category =
   mongoose.models.Category || mongoose.model("Category", categorySchema);

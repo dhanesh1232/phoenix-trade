@@ -63,7 +63,7 @@ export const ImageModal: React.FC<ImageModalProps> = ({
 
   React.useEffect(() => {
     if (open) {
-      console.log(selected);
+      // console.log(selected);
       if (selected) {
         setSelectedImage([...selected]);
       } else {

@@ -150,7 +150,7 @@ export default function ProductDetailPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
             {/* LEFT SIDE - STICKY IMAGE GALLERY */}
-            <div className="lg:sticky lg:top-8 lg:self-start lg:h-[calc(100vh-4rem)]">
+            <div className="lg:sticky lg:top-20 lg:self-start lg:h-[calc(100vh-4rem)]">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}

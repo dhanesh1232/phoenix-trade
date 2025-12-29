@@ -24,7 +24,7 @@ export async function POST(req) {
     const user = await User.create(body);
     return SuccessHandles.Ok("Success", user);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return ErrorHandles.InternalServer(err.message);
   }
 }

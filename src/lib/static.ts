@@ -31,6 +31,11 @@ export const adminLinks = [
     url: "/enquiries",
     icon: "message",
   },
+  {
+    title: "Media",
+    url: "/media",
+    icon: "files",
+  },
   // {
   //   title: "Content",
   //   url: "/content",

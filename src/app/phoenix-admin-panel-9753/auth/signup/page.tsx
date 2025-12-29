@@ -48,7 +48,7 @@ export default function SignUpPage() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       toast.success(data.message);
     } catch (err: unknown) {
       console.log(err);

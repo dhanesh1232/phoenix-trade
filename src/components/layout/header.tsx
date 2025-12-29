@@ -40,7 +40,6 @@ export default function Header() {
   if (path.startsWith("/phoenix-admin-panel-9753") || path === "/not-found") {
     return null;
   }
-  console.log(categories);
 
   return (
     <>

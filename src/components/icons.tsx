@@ -1,6 +1,7 @@
 import {
   ChevronDown,
   CornerDownLeft,
+  FileText,
   Info,
   Layers2,
   LayoutDashboard,
@@ -26,4 +27,5 @@ export const Icons = {
   info: Info,
   chevronDown: ChevronDown,
   message: MessageCircle,
+  files: FileText,
 } as const;

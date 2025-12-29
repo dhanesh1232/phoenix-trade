@@ -16,7 +16,7 @@ export default function Page() {
       setLoading(true);
       const res = await fetch(`/api/products/${id}`);
       const data = await res.json();
-      console.log(data.data.product);
+      // console.log(data.data.product);
       setProduct(data.data.product);
     } catch (err: unknown) {
       const e = err as Error;

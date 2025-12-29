@@ -16,7 +16,7 @@ export async function GET() {
     return SuccessHandles.Ok("Success", user);
   } catch (err: unknown) {
     const e = err as Error;
-    console.log(e.message);
+    // console.log(e.message);
     return ErrorHandles.InternalServer(e.message);
   }
 }
@@ -45,7 +45,7 @@ export async function PATCH(req: Request) {
     return SuccessHandles.Ok("Success", user);
   } catch (err: unknown) {
     const e = err as Error;
-    console.log(e.message);
+    // console.log(e.message);
     return ErrorHandles.InternalServer(e.message);
   }
 }

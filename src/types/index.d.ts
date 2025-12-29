@@ -80,6 +80,13 @@ declare global {
     fileName?: string;
     id?: string;
     thumbnail?: string;
+    used?: boolean;
+    usageCount?: number;
+    usagePoints?: {
+      category?: number;
+      productFeatured?: number;
+      productGallery?: number;
+    };
   };
 
   type CategoryFormValues = {
