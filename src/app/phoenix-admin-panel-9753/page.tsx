@@ -164,7 +164,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-3">
           <div className="relative w-full lg:w-72">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -184,12 +184,12 @@ export default function DashboardPage() {
             {isLoading ? (
               <span className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Refreshing....
+                <span className="hidden lg:block">Refreshing....</span>
               </span>
             ) : (
               <span className="flex items-center gap-2">
                 <RefreshCcw className={`h-4 w-4`} />
-                Refresh
+                <span className="hidden lg:block">Refresh</span>
               </span>
             )}
           </Button>
@@ -197,13 +197,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         <StatCard
           title="Total Products"
           value={summary?.global.totalProducts || 0}
           trend="up"
           icon={<Package className="h-5 w-5" />}
-          color="from-blue-500 to-blue-600"
+          color="bg-linear-to-br from-blue-500 to-blue-600 text-white"
           loading={isLoading}
         />
         <StatCard
@@ -211,7 +211,7 @@ export default function DashboardPage() {
           value={summary?.global.activeProducts || 0}
           trend="up"
           icon={<Activity className="h-5 w-5" />}
-          color="from-emerald-500 to-emerald-600"
+          color="bg-linear-to-br from-emerald-500 to-emerald-600 text-white"
           loading={isLoading}
         />
         <StatCard
@@ -219,7 +219,15 @@ export default function DashboardPage() {
           value={summary?.global.draftProducts || 0}
           trend="up"
           icon={<Boxes className="h-5 w-5" />}
-          color="from-amber-500 to-amber-600"
+          color="bg-linear-to-br from-amber-500 to-amber-600 text-white"
+          loading={isLoading}
+        />
+        <StatCard
+          title="Inactive Products"
+          value={summary?.global.inactiveProducts || 0}
+          trend="up"
+          icon={<Package className="h-5 w-5" />}
+          color="bg-linear-to-br from-orange-500 to-orange-600 text-white"
           loading={isLoading}
         />
         <StatCard
@@ -227,7 +235,7 @@ export default function DashboardPage() {
           value={summary?.global.totalCategories || 0}
           trend="up"
           icon={<PieIcon className="h-5 w-5" />}
-          color="from-purple-500 to-purple-600"
+          color="bg-linear-to-br from-purple-500 to-purple-600 text-white"
           loading={isLoading}
         />
       </div>
@@ -355,7 +363,7 @@ export default function DashboardPage() {
               <Table className="border-t">
                 <TableHeader>
                   <TableRow className="hover:bg-transparent border-b border-border/50">
-                    <TableHead className="w-48">Product</TableHead>
+                    <TableHead className="w-32">Product</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Markets</TableHead>
                     <TableHead>Status</TableHead>
@@ -402,7 +410,7 @@ export default function DashboardPage() {
                       >
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-muted to-muted-foreground/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <div className="h-10 w-10 rounded-lg bg-linear-to-br from-muted to-muted-foreground/10 flex items-center justify-center group-hover:scale-105 transition-transform">
                               <Package className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <div className="min-w-0">
@@ -522,6 +530,7 @@ function StatCard({
   change,
   trend,
   icon,
+  color,
   loading = false,
 }: StatCardProps) {
   return (
@@ -542,7 +551,7 @@ function StatCard({
           <>
             <div className="flex items-center justify-between">
               <div
-                className={`h-10 w-10 rounded-full bg-accent/50 flex items-center justify-center group-hover:scale-105 transition-transform`}
+                className={`h-10 w-10 rounded-full ${color} flex items-center justify-center group-hover:scale-105 transition-transform`}
               >
                 {icon}
               </div>
