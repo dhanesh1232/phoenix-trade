@@ -37,6 +37,12 @@ export default function ProductsMainPage() {
       </section>
 
       <CategoryShow />
+
+      <WhatsAppCTA
+        variant="default"
+        phoneNumber="917382675969"
+        message="Hi, I'm interested in your export services and would like to discuss my requirements."
+      />
     </main>
   );
 }
@@ -48,7 +54,7 @@ export function CategoryShow() {
 
   return (
     <section className="pb-20 pt-10 md:pt-12 bg-transparent">
-      <div className="mx-auto max-w-7xl px-4 pb-10">
+      <div className="mx-auto max-w-7xl px-4">
         {!hasCategories && (
           <div className="py-16 text-center text-sm text-muted-foreground">
             Categories will appear here once they are published.
@@ -123,11 +129,6 @@ export function CategoryShow() {
           </div>
         )}
       </div>
-      <WhatsAppCTA
-        variant="default"
-        phoneNumber="917382675969"
-        message="Hi, I'm interested in your export services and would like to discuss my requirements."
-      />
     </section>
   );
 }
