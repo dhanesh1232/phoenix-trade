@@ -42,6 +42,7 @@ declare global {
     };
     category: any;
     detailPage: boolean;
+    seo?: Metadata;
   };
 
   type ContactForm = {

@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useApp } from "@/context/handler";
 import { MoveRight } from "lucide-react";
-import { BananaFiberShowcase } from "../home/banana-fabric";
+import { WhatsAppCTA } from "@/components/global/whatsapp-cta";
 
 type Category = {
   _id: string;
@@ -23,13 +23,13 @@ export default function ProductsMainPage() {
       {/* Page Header */}
       <section className="py-20 md:py-24 bg-muted/60 border-b border-border">
         <div className="mx-auto max-w-5xl px-4 text-center">
-          <p className="mb-3 text-[11px] md:text-xs tracking-[0.25em] uppercase text-primary">
+          <p className="mb-1.5 text-[11px] md:text-xs tracking-[0.25em] uppercase text-primary">
             Product Range
           </p>
-          <h1 className="text-2xl md:text-4xl font-semibold font-['Playfair_Display'] leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold font-['Playfair_Display'] leading-tight">
             Our Products
           </h1>
-          <p className="mt-3 text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
+          <p className="mt-2 text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
             Trusted agricultural and marine produce for global buyers, curated
             by category for clear and efficient sourcing decisions.
           </p>
@@ -37,8 +37,6 @@ export default function ProductsMainPage() {
       </section>
 
       <CategoryShow />
-
-      <BananaFiberShowcase />
     </main>
   );
 }
@@ -49,8 +47,8 @@ export function CategoryShow() {
   const hasCategories = Array.isArray(categories) && categories.length > 0;
 
   return (
-    <section className="pb-20 pt-10 md:pt-12 bg-background">
-      <div className="mx-auto max-w-7xl px-4">
+    <section className="pb-20 pt-10 md:pt-12 bg-transparent">
+      <div className="mx-auto max-w-7xl px-4 pb-10">
         {!hasCategories && (
           <div className="py-16 text-center text-sm text-muted-foreground">
             Categories will appear here once they are published.
@@ -125,6 +123,11 @@ export function CategoryShow() {
           </div>
         )}
       </div>
+      <WhatsAppCTA
+        variant="default"
+        phoneNumber="917382675969"
+        message="Hi, I'm interested in your export services and would like to discuss my requirements."
+      />
     </section>
   );
 }

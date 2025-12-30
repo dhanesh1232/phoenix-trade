@@ -5,6 +5,9 @@ import { getProducts, getCategories } from "@/lib/fetch";
 export const dynamic = "force-static";
 export const revalidate = 3600; // Re-generate every hour
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexportshub.com";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     // Fetch dynamic data from DB
@@ -16,25 +19,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Static high-priority pages
     const staticPages: MetadataRoute.Sitemap = [
       {
-        url: "https://www.phoenixexportshub.com",
+        url: SITE_URL,
         lastModified: new Date(),
         changeFrequency: "weekly" as const,
         priority: 1.0,
       },
       {
-        url: "https://www.phoenixexportshub.com/products",
+        url: `${SITE_URL}/products`,
         lastModified: new Date(),
         changeFrequency: "daily" as const,
         priority: 0.9,
       },
       {
-        url: "https://www.phoenixexportshub.com/about",
+        url: `${SITE_URL}/about-us`,
         lastModified: new Date(),
         changeFrequency: "monthly" as const,
         priority: 0.8,
       },
       {
-        url: "https://www.phoenixexportshub.com/contact",
+        url: `${SITE_URL}/contact`,
         lastModified: new Date(),
         changeFrequency: "monthly" as const,
         priority: 0.7,
@@ -44,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Dynamic category pages
     const categoryPages: MetadataRoute.Sitemap = categories.map(
       (category: any) => ({
-        url: `https://www.phoenixexportshub.com/products/${category.slug}`,
+        url: `${SITE_URL}/products/${category.slug}`,
         lastModified: new Date(category.updatedAt || category.createdAt),
         changeFrequency: "weekly" as const,
         priority: 0.85,
@@ -54,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Dynamic product pages (highest priority)
     const productPages: MetadataRoute.Sitemap = products.map(
       (product: any) => ({
-        url: `https://www.phoenixexportshub.com/products/${product.category.slug}/${product.slug}`,
+        url: `${SITE_URL}/products/${product.category.slug}/${product.slug}`,
         lastModified: new Date(product.updatedAt || product.createdAt),
         changeFrequency: "weekly" as const,
         priority: 0.95,
@@ -71,13 +74,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fallback to static pages only
     return [
       {
-        url: "https://www.phoenixexportshub.com",
+        url: `${SITE_URL}`,
         lastModified: new Date(),
         changeFrequency: "weekly" as const,
         priority: 1.0,
       },
       {
-        url: "https://www.phoenixexportshub.com/products",
+        url: `${SITE_URL}/products`,
         lastModified: new Date(),
         changeFrequency: "daily" as const,
         priority: 0.9,

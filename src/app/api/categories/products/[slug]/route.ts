@@ -26,7 +26,7 @@ export async function GET(
     if (!product) {
       return ErrorHandles.NotFound("Product not found.");
     }
-
+    // console.log(product);
     return SuccessHandles.Ok("Product fetched successfully.", {
       product,
       relatedProducts: filterRelatedProducts,

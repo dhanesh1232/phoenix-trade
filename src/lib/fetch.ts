@@ -37,6 +37,7 @@ export async function getProducts({
 }
 
 export async function getCategories() {
+  await dbConnect();
   try {
     const categories = await Category.find().sort({
       updatedAt: -1,

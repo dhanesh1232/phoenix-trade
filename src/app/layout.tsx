@@ -12,9 +12,11 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+const SITE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexportshub.com";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://phoenixexportshub.com"),
+  metadataBase: new URL(SITE_URL),
   title: "Phoenix Export Company | Global Quality Exports & Trade Solutions",
   description:
     "Phoenix Export Company – trusted global exporter of premium products. Reliable trade solutions, worldwide logistics, and unmatched quality assurance. Partner with us for excellence.",
@@ -36,7 +38,7 @@ export const metadata: Metadata = {
     title: "Phoenix Export Company | Global Quality Exports",
     description:
       "Leading global exporter delivering premium products with reliable trade solutions and worldwide logistics.",
-    url: "https://phoenixexportshub.com",
+    url: SITE_URL,
     siteName: "Phoenix Export Company",
     images: [
       {
@@ -78,7 +80,7 @@ export const metadata: Metadata = {
   },
 
   alternates: {
-    canonical: "https://phoenixexportshub.com",
+    canonical: SITE_URL,
   },
   manifest: "/site.webmanifest",
 };
