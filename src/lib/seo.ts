@@ -183,6 +183,11 @@ export function organizationJsonLd(overrides = {}) {
       areaServed: "Worldwide",
       availableLanguage: ["English"],
     },
+    creator: {
+      "@type": "Organization",
+      name: "ECODrIx",
+      url: "https://services.ecodrix.com",
+    },
   };
 
   return JSON.stringify({ ...base, ...overrides });

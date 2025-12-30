@@ -39,7 +39,7 @@ export function BackToTop() {
           exit={{ y: 40, opacity: 0 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
           className={cn(
-            "fixed left-1/2 bottom-4 z-40 -translate-x-1/2 rounded-full bg-primary text-primary-foreground shadow-md hover:shadow-lg",
+            "fixed left-1/2 bottom-10 z-40 -translate-x-1/2 rounded-full bg-primary text-primary-foreground shadow-md hover:shadow-lg",
             "flex items-center justify-center gap-1.5 px-4 py-2 text-[11px] font-medium tracking-[0.18em] uppercase",
             "backdrop-blur-sm border border-primary/40 cursor-pointer hover:bg-primary/50"
           )}

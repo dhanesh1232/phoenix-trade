@@ -40,7 +40,7 @@ const contactDetails = [
   },
   {
     label: "Email",
-    value: "info@phoenixinternationaltrading.com",
+    value: "info@phoenixexportshub.com",
     icon: FaEnvelope,
   },
   {
@@ -185,11 +185,22 @@ export const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/5">
-        <div className="mx-auto max-w-7xl px-4 lg:px-6 py-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between text-[11px] tracking-[0.22em] uppercase text-gray-500">
+        <div className="mx-auto max-w-7xl px-4 lg:px-6 py-5 flex flex-col items-center gap-3 md:flex-row md:items-center md:justify-between text-[11px] tracking-[0.22em] text-center uppercase text-gray-500">
           <p>
             © {new Date().getFullYear()} Phoenix International Trading. All
             rights reserved.
+            <span className="mx-2 opacity-40">|</span>
+            <span>Developed by </span>
+            <Link
+              href="https://services.ecodrix.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-emerald-300 transition-colors font-bold"
+            >
+              ECODrIx
+            </Link>
           </p>
+
           <div className="flex flex-wrap gap-4">
             <span>Global Sourcing. Refined Delivery.</span>
           </div>
