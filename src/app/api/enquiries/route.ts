@@ -1,6 +1,8 @@
 import dbConnect from "@/lib/connection";
+import { sendEnquiryMails } from "@/lib/mail/sendEnquiryMails";
 import { ErrorHandles, SuccessHandles } from "@/lib/response";
 import { Enquiry } from "@/models/Enquiry";
+import { User } from "@/models/user";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -31,6 +33,10 @@ export async function POST(req: Request) {
       return ErrorHandles.BadRequest("Please provide a valid email address.");
     }
 
+    const admin = await User.find({ role: "admin" }).select("email");
+    const adminEmails = admin.map((user) => user.email);
+
+    // Create enquiry
     const enquiry = await Enquiry.create({
       name: String(name).trim(),
       email: String(email).trim().toLowerCase(),
@@ -41,6 +47,21 @@ export async function POST(req: Request) {
       timeline: timeline ? String(timeline).trim() : undefined,
       message: message ? String(message).trim() : undefined,
       phone: phone ? String(phone).trim() : undefined,
+    });
+
+    // Send enquiry emails
+    await sendEnquiryMails({
+      name: enquiry.name,
+      email: enquiry.email,
+      country: enquiry.country,
+      product: enquiry.product,
+      quantity: enquiry.quantity || "",
+      packaging: enquiry.packaging || "",
+      timeline: enquiry.timeline || "",
+      message: enquiry.message || "",
+      product_or_category: enquiry.product,
+      toEmail: adminEmails,
+      phone: enquiry.phone || "",
     });
 
     return SuccessHandles.Created("Enquiry submitted successfully.", {

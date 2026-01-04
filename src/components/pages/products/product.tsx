@@ -30,6 +30,7 @@ import { WhatsAppCTA } from "@/components/global/whatsapp-cta";
 import { FaWhatsapp } from "react-icons/fa";
 import { useApp } from "@/context/handler";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
+import { Certifications } from "@/components/global/certifactes";
 
 /* ================= PAGE ================= */
 
@@ -515,12 +516,8 @@ export function ProductDetailPage() {
           </div>
         </div>
 
-        {/* ================= WHATSAPP CTA ================= */}
-        <WhatsAppCTA
-          variant="banner"
-          phoneNumber="917382675969"
-          message="Hi, I'm interested in your export services and would like to discuss my requirements."
-        />
+        {/* Certifications & Compliance */}
+        <Certifications />
 
         {/* ================= RELATED PRODUCTS ================= */}
         <section className="py-20 border-t border-border">
@@ -563,6 +560,13 @@ export function ProductDetailPage() {
             </div>
           </div>
         </section>
+
+        {/* ================= WHATSAPP CTA ================= */}
+        <WhatsAppCTA
+          variant="banner"
+          phoneNumber="917382675969"
+          message="Hi, I'm interested in your export services and would like to discuss my requirements."
+        />
       </div>
     </>
   );

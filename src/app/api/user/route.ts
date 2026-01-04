@@ -26,7 +26,7 @@ export async function PATCH(req: Request) {
   try {
     const session = await getSessionServer();
     const id = session?.user?.id;
-    const { name, email } = await req.json();
+    const { name, email, role } = await req.json();
     if (!id) {
       return ErrorHandles.Unauthorized("Unauthorized");
     }
@@ -36,6 +36,7 @@ export async function PATCH(req: Request) {
       {
         name,
         email,
+        role,
       },
       { new: true, runValidators: true }
     );

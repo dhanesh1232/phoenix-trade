@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { WhatsAppCTA } from "../global/whatsapp-cta";
 import { organizationJsonLd } from "@/lib/seo";
+import { Certifications } from "../global/certifactes";
 
 export default function AboutPage() {
   return (
@@ -11,7 +12,7 @@ export default function AboutPage() {
           __html: organizationJsonLd(),
         }}
       />
-      <main className="min-h-screen bg-background text-foreground">
+      <div className="min-h-full bg-background text-foreground">
         {/* Page Header */}
         <section className="py-24 md:py-28 bg-muted/60 border-b border-border">
           <div className="mx-auto max-w-4xl px-4 text-center space-y-5">
@@ -102,6 +103,9 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        {/* Certifications & Compliance */}
+        <Certifications />
 
         {/* How We Operate / What Makes Us Different */}
         <section className="py-20 md:py-24 bg-muted/40 border-y border-border">
@@ -209,7 +213,7 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-      </main>
+      </div>
     </>
   );
 }

@@ -95,6 +95,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (session?.user) {
+      console.log(session);
       fetchSummary();
     }
   }, [fetchSummary, session]);

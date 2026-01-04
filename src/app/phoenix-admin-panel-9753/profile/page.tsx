@@ -8,10 +8,19 @@ import { Label } from "@/components/ui/label";
 import { User, Mail, Lock, Loader2, X, Check } from "lucide-react";
 import { PasswordField } from "@/components/ui/field";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
+type Roles = "user" | "admin" | "sales";
 interface UserProfile {
   name: string;
   email: string;
+  role: Roles;
 }
 
 export default function ProfilePage() {
@@ -19,9 +28,14 @@ export default function ProfilePage() {
   const [originalUser, setOriginalUser] = useState<UserProfile>({
     name: "",
     email: "",
+    role: "user",
   });
   // Editable working copy
-  const [user, setUser] = useState<UserProfile>({ name: "", email: "" });
+  const [user, setUser] = useState<UserProfile>({
+    name: "",
+    email: "",
+    role: "user",
+  });
   const [isPending, startTransition] = useTransition();
   const [isChanging, setIsChanging] = useState(false);
 
@@ -42,7 +56,9 @@ export default function ProfilePage() {
 
   // Track if user has made changes
   const hasUserChanges =
-    user.name !== originalUser.name || user.email !== originalUser.email;
+    user.name !== originalUser.name ||
+    user.email !== originalUser.email ||
+    user.role !== originalUser.role;
 
   useEffect(() => {
     // Fetch profile data
@@ -56,9 +72,10 @@ export default function ProfilePage() {
         const profile: UserProfile = {
           name: data.data.name,
           email: data.data.email,
+          role: data.data.role,
         };
 
-        setOriginalUser(profile);
+        setOriginalUser(profile); // Sync original state
         setUser(profile); // Sync editable state
       } catch (err) {
         toast.error("Failed to load profile");
@@ -82,7 +99,11 @@ export default function ProfilePage() {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ name: user.name, email: user.email }),
+          body: JSON.stringify({
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          }),
         });
 
         if (res.ok) {
@@ -203,11 +224,24 @@ export default function ProfilePage() {
 
       {/* Account Information Card */}
       <Card className="border border-border bg-background gap-2 p-4">
-        <CardHeader className="px-0">
+        <CardHeader className="px-0 flex items-center w-full justify-between flex-row">
           <CardTitle className="text-xl font-semibold flex items-center gap-2">
             <User className="h-5 w-5" />
             Account Information
           </CardTitle>
+          <Select
+            value={user.role}
+            onValueChange={(e: Roles) => setUser({ ...user, role: e })}
+          >
+            <SelectTrigger size="sm">
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="user">User</SelectItem>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="sales">Sales</SelectItem>
+            </SelectContent>
+          </Select>
         </CardHeader>
         <CardContent className="space-y-4 px-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
