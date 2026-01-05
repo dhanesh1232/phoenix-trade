@@ -1,5 +1,6 @@
 "use client";
 
+import { contact, message } from "@/lib/contact";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaWhatsapp } from "react-icons/fa";
@@ -14,7 +15,7 @@ export const WhatsAppFloatingButton = () => {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <Link
-        href="https://wa.me/917382675969"
+        href={message(contact.phone)}
         target="_blank"
         className="relative block"
       >

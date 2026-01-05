@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FaWhatsapp } from "react-icons/fa";
+import { contact, message } from "@/lib/contact";
 
 interface WhatsAppCTAProps {
   phoneNumber?: string;
@@ -11,14 +12,12 @@ interface WhatsAppCTAProps {
 }
 
 export function WhatsAppCTA({
-  phoneNumber = "917382675969",
-  message = "Hello, I'd like to inquire about your export services.",
+  phoneNumber = contact.phone,
+  message: msg = "Hello, I'd like to inquire about your export services.",
   className,
   variant = "default",
 }: WhatsAppCTAProps) {
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-    message
-  )}`;
+  const whatsappUrl = message(phoneNumber, msg);
 
   // Compact pill button
   if (variant === "compact") {

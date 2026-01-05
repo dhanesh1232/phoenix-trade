@@ -124,7 +124,14 @@ export function WhatsappDialogForm() {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen} modal>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        setIsOpen(!isOpen);
+        handleClose();
+      }}
+      modal
+    >
       <DialogContent className="sm:max-w-md p-0 max-h-[90vh] overflow-hidden flex flex-col gap-0">
         {/* Header */}
         <DialogHeader className="p-6 pb-4 border-b border-border/50 flex items-center justify-between">

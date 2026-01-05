@@ -1,3 +1,5 @@
+import { contact } from "./contact";
+
 export const product_whatsapp_message = (
   name: string,
   category: string,
@@ -33,5 +35,7 @@ Thank you! 🙏`;
   // Replace spaces and newlines for WhatsApp URL
   const encodedMessage = encodeURIComponent(finalMessage);
 
-  return `https://wa.me/917382675969?text=${encodedMessage}`;
+  return `https://wa.me/${contact.phone
+    .trim()
+    .replace(" ", "")}?text=${encodedMessage}`;
 };

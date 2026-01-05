@@ -1,58 +1,16 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  FaMapMarkerAlt,
-  FaEnvelope,
-  FaWhatsapp,
-  FaClock,
-} from "react-icons/fa";
+
 import { LogoBlock } from "./header";
 import { useApp } from "@/context/handler";
+import { contact, contactDetails, message } from "@/lib/contact";
 
 const quickLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about-us" },
   { label: "Why Choose Us", href: "/why-choose-us" },
   { label: "Contact", href: "/contact" },
-];
-
-const productLinks = [
-  {
-    href: "/products/fresh-agriculture-produce",
-    label: "Fresh Agriculture Produce",
-  },
-  {
-    href: "/products/marine-products",
-    label: "Marine Products",
-  },
-  {
-    href: "/products/dried-value-added-products",
-    label: "Dried & Value-Added Products",
-  },
-];
-
-const contactDetails = [
-  {
-    label: "Location",
-    value: "Kakinada, Andhra Pradesh, India",
-    icon: FaMapMarkerAlt,
-  },
-  {
-    label: "Email",
-    value: "info@phoenixexportshub.com",
-    icon: FaEnvelope,
-  },
-  {
-    label: "WhatsApp",
-    value: "+91 7382675969",
-    icon: FaWhatsapp,
-  },
-  {
-    label: "Business Hours",
-    value: "Monday – Saturday, 9:00 AM – 7:00 PM (IST)",
-    icon: FaClock,
-  },
 ];
 
 const CategoryLinks = () => {
@@ -164,7 +122,7 @@ export const Footer = () => {
                     </Link>
                   ) : isWhatsApp ? (
                     <Link
-                      href="https://wa.me/917382675969"
+                      href={message(item.value)}
                       target="_blank"
                       rel="noreferrer"
                       className="group inline-flex items-start gap-3 hover:text-emerald-300 transition-colors"

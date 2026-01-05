@@ -215,7 +215,7 @@ export function productJsonLd(product: {
       "@type": "Offer",
       availability: "https://schema.org/InStock",
       priceCurrency: "USD",
-      url: `https://phoenix-trade.vercel.app/products/${product.slug}`,
+      url: `${SITE_URL}/products/${product.slug}`,
       seller: {
         "@type": "Organization",
         name: "Phoenix Trade Exports",

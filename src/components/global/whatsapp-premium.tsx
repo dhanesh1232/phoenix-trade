@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
+import { contact, message } from "@/lib/contact";
 
 export const WhatsAppPremium = () => {
   const [glow, setGlow] = useState(false);
@@ -20,7 +21,7 @@ export const WhatsAppPremium = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 select-none">
-      <Link href="https://wa.me/91XXXXXXXXXX" target="_blank">
+      <Link href={message(contact.phone)} target="_blank">
         <div className="relative w-20 h-20 flex items-center justify-center">
           {/* --- OUTER ANIMATED RING (with padding gap) --- */}
           <div className="absolute inset-0 flex items-center justify-center">

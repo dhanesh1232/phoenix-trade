@@ -46,7 +46,7 @@ export default function Header() {
       <header
         className={cn(
           path === "/"
-            ? "fixed"
+            ? "fixed backdrop-blur-xs"
             : "sticky bg-background backdrop-blur supports-backdrop-filter:bg-background",
           "left-0 right-0 top-0 z-50 w-full transition-all duration-300",
           scrolled || menuOpen

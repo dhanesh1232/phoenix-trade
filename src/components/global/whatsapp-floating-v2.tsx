@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaWhatsapp, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { contact, message } from "@/lib/contact";
 
 export const WhatsAppFloatingV2 = () => {
   const [open, setOpen] = useState(false);
@@ -22,21 +23,21 @@ export const WhatsAppFloatingV2 = () => {
             >
               {/* Call */}
               <FloatingMiniButton
-                href="tel:+91XXXXXXXXXX"
+                href={`tel:${contact.phone.replace(" ", "").trim()}`}
                 icon={<FaPhoneAlt size={18} />}
                 label="Call"
               />
 
               {/* Email */}
               <FloatingMiniButton
-                href="mailto:info@phoenixinternational.com"
+                href={`mailto:${contact.email}`}
                 icon={<FaEnvelope size={18} />}
                 label="Email"
               />
 
               {/* WhatsApp */}
               <FloatingMiniButton
-                href="https://wa.me/91XXXXXXXXXX"
+                href={message(contact.phone)}
                 icon={<FaWhatsapp size={18} />}
                 label="Chat"
               />

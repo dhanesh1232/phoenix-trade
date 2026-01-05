@@ -1,5 +1,5 @@
 // ./src/components/pages/products/text-description-json.tsx
-import React from "react";
+import * as React from "react";
 import { cn } from "@/lib/utils"; // Add this import if not already present
 
 const HEADING_COMPONENTS: Record<number, React.ElementType> = {

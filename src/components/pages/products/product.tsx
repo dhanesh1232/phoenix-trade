@@ -31,6 +31,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { useApp } from "@/context/handler";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import { Certifications } from "@/components/global/certifactes";
+import { contact } from "@/lib/contact";
 
 /* ================= PAGE ================= */
 
@@ -564,7 +565,7 @@ export function ProductDetailPage() {
         {/* ================= WHATSAPP CTA ================= */}
         <WhatsAppCTA
           variant="banner"
-          phoneNumber="917382675969"
+          phoneNumber={contact.phone}
           message="Hi, I'm interested in your export services and would like to discuss my requirements."
         />
       </div>
@@ -622,7 +623,7 @@ function ProductSkeleton() {
         <div className="grid lg:grid-cols-2 gap-16">
           {/* Image skeleton */}
           <div className="space-y-6">
-            <Skeleton className="aspect-[4/3] rounded-2xl" />
+            <Skeleton className="aspect-4/3 rounded-2xl" />
             <div className="grid grid-cols-4 gap-3">
               {[1, 2, 3, 4].map((i) => (
                 <Skeleton key={i} className="aspect-square rounded-xl" />

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useApp } from "@/context/handler";
 import { MoveRight } from "lucide-react";
 import { WhatsAppCTA } from "@/components/global/whatsapp-cta";
+import { contact } from "@/lib/contact";
 
 type Category = {
   _id: string;
@@ -40,7 +41,7 @@ export default function ProductsMainPage() {
 
       <WhatsAppCTA
         variant="default"
-        phoneNumber="917382675969"
+        phoneNumber={contact.phone}
         message="Hi, I'm interested in your export services and would like to discuss my requirements."
       />
     </main>

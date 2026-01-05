@@ -4,6 +4,7 @@ import Link from "next/link";
 import { WhatsAppCTA } from "../global/whatsapp-cta";
 import { EnquiryForm } from "../global/contact-form";
 import { organizationJsonLd } from "@/lib/seo";
+import { contact, message } from "@/lib/contact";
 
 export default function ContactPage() {
   return (
@@ -44,7 +45,7 @@ export default function ContactPage() {
               <div className="space-y-6">
                 <div className="space-y-2 text-sm">
                   <p className="text-foreground font-medium">
-                    Kakinada, Andhra Pradesh
+                    {contact.location}
                   </p>
                   <p className="text-xs text-muted-foreground tracking-wide uppercase">
                     Export Headquarters, India
@@ -53,7 +54,7 @@ export default function ContactPage() {
 
                 <div className="space-y-4 pt-6 border-t border-border">
                   <Link
-                    href="mailto:info@phoenixexportshub.com"
+                    href={`mailto:${contact.email}`}
                     className="group flex items-center gap-3 p-4 bg-card hover:bg-primary/5 border border-border hover:border-primary/30 transition-all duration-200 "
                   >
                     <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -76,13 +77,13 @@ export default function ContactPage() {
                         Email Export Team
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        info@phoenixexportshub.com
+                        {contact.email}
                       </p>
                     </div>
                   </Link>
 
                   <Link
-                    href="https://wa.me/917382675969"
+                    href={message(contact.phone)}
                     target="_blank"
                     rel="noreferrer"
                     className="group flex items-center gap-3 p-4 bg-card hover:bg-primary/5 border border-border hover:border-primary/30 transition-all duration-200 "
@@ -101,7 +102,7 @@ export default function ContactPage() {
                         WhatsApp Business
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        +91 7382675969
+                        {contact.phone}
                       </p>
                     </div>
                   </Link>
@@ -128,7 +129,7 @@ export default function ContactPage() {
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Mon–Sat 9AM–7PM IST
+                      {contact.hours}
                     </p>
                     <p className="text-xs text-primary font-medium mt-1">
                       Replies within 24 hours
@@ -143,7 +144,7 @@ export default function ContactPage() {
         </section>
         <WhatsAppCTA
           variant="default"
-          phoneNumber="917382675969"
+          phoneNumber={contact.phone}
           message="Hi, I'm interested in your export services and would like to discuss my requirements."
         />
       </div>

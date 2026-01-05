@@ -6,6 +6,7 @@ import { IntroSection } from "@/components/pages/home/intro";
 import { ProductCategoriesSection } from "@/components/pages/home/product-category";
 import { WhoWeAre } from "@/components/pages/home/who-we-are";
 import { WhyChooseSection } from "@/components/pages/home/why-choose-us";
+import { contact } from "@/lib/contact";
 
 export default function Page() {
   return (
@@ -19,7 +20,7 @@ export default function Page() {
       <div className="h-px bg-gray-200 max-w-7xl mx-auto" />
       <WhatsAppCTA
         variant="default"
-        phoneNumber="917382675969"
+        phoneNumber={contact.phone}
         message="Hi, I'm interested in your export services and would like to discuss my requirements."
       />
       <GlobalSupplySection />

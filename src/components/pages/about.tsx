@@ -2,6 +2,7 @@ import Link from "next/link";
 import { WhatsAppCTA } from "../global/whatsapp-cta";
 import { organizationJsonLd } from "@/lib/seo";
 import { Certifications } from "../global/certifactes";
+import { contact } from "@/lib/contact";
 
 export default function AboutPage() {
   return (
@@ -201,7 +202,7 @@ export default function AboutPage() {
             <div className="flex justify-center items-center flex-col sm:flex-row gap-2 pt-4">
               <WhatsAppCTA
                 variant="compact"
-                phoneNumber="917382675969"
+                phoneNumber={contact.phone}
                 message="Hi, I'm interested in your export services and would like to discuss my requirements."
               />
               <Link
