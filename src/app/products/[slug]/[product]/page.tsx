@@ -7,7 +7,7 @@ type Props = {
   params: Promise<{ slug: string; product: string }>;
 };
 
-const URL = process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexportshub.com";
+const URL = process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexporthub.com";
 
 export async function generateMetadata({ params }: Props) {
   const { slug: categorySlug, product: productSlug } = await params;

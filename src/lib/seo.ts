@@ -1,7 +1,7 @@
 import { keywords } from "./keywords";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexportshub.com";
+  process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexporthub.com";
 
 const SITE_NAME = "Phoenix Trade Exports";
 

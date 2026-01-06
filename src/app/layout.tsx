@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 const SITE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexportshub.com";
+  process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexporthub.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     description:
       "Leading global exporter delivering premium products with reliable trade solutions and worldwide logistics.",
     images: ["/twitter-image.jpg"],
-    creator: "@phoenixexports",
+    creator: "@phoenixexport",
   },
   robots: {
     index: true,

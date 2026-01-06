@@ -13,7 +13,7 @@ export async function proxy(req: NextRequest) {
 
   // Canonical URL handling
   if (url.pathname.startsWith("/products")) {
-    const canonicalUrl = `https://www.phoenixexportshub.com${url.pathname}`;
+    const canonicalUrl = `https://www.phoenixexporthub.com${url.pathname}`;
     const response = NextResponse.next();
     response.headers.set("Link", `<${canonicalUrl}>; rel="canonical"`);
     return response;

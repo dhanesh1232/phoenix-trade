@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://www.phoenixexportshub.com/sitemap.xml
+Sitemap: https://www.phoenixexporthub.com/sitemap.xml
 
 # Allow search engines
 User-agent: Googlebot

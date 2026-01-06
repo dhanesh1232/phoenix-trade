@@ -6,7 +6,7 @@ export const dynamic = "force-static";
 export const revalidate = 3600; // Re-generate every hour
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexportshub.com";
+  process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexporthub.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {

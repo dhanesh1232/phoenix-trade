@@ -30,7 +30,7 @@ export async function sendEnquiryMails(data: EnquiryPayload) {
   // 1) Send to internal team
   await transporter.sendMail({
     from: `"Phoenix Trade Exports" <${process.env.FROM_EMAIL}>`,
-    to: internal.to, // e.g., sales@phoenixexports.com
+    to: internal.to, // e.g., sales@phoenixexporthub.com
     subject: internal.subject,
     html: internal.html,
   });
