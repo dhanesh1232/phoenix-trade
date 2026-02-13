@@ -190,7 +190,9 @@ declare global {
   interface RichTextEditorProps {
     content?: string;
     onChange?: (value: string | any) => void;
+    placeholder?: string;
   }
 }
 
-export {};
+export { };
+

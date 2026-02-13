@@ -1,8 +1,8 @@
+import Main from "@/components/layout/main";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Main from "@/components/layout/main";
 import Script from "next/script";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://phoenixexporthub.com";
 
